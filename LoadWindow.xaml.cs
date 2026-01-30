@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,9 @@ namespace SelectUnknown
         public LoadWindow()
         {
             InitializeComponent();
+            Version.Text = Main.APP_VERSION;
+            CopyrightInfo.Text = Main.COPYRIGHT_INFO;
+            
         }
     }
 }

@@ -11,14 +11,29 @@
         ShowInTaskbar="False"
         Title="LoadWindow" Height="350" Width="620">
     <Grid>
-        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
-            <TextBlock Text="SelectUnknow - 框索未知" FontSize="36" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-            <TextBlock Text="V1.0.0" HorizontalAlignment="Left" Margin="10,5,0,0"/>
-        </StackPanel>
-        <TextBlock Text="Copyright © 2026 yl_lty. All rights reserved." VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,5"/>
-        <Viewbox Stretch="UniformToFill">
-            <Image Source="/res/load-window.png" 
-                   Stretch="UniformToFill"/>
-        </Viewbox>
+
+        <TextBlock Name="CopyrightInfo" Text="Copyright © 2026 yl_lty" Foreground="#F0F0F0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,5">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="3" 
+                          Direction="315"
+                          BlurRadius="5"
+                          Opacity="0.7"
+                          Color="Black"/>
+            </TextBlock.Effect>
+        </TextBlock>
+        <TextBlock Name="Version" Text="V" Foreground="White" HorizontalAlignment="Left" Margin="462,208,0,127">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="3" 
+                          Direction="315"
+                          BlurRadius="5"
+                          Opacity="0.7"
+                          Color="Black"/>
+            </TextBlock.Effect>
+        </TextBlock>
+
     </Grid>
+    <Window.Background>
+        <ImageBrush ImageSource="pack://siteoforigin:,,,/res/load-window.png" 
+                    Stretch="UniformToFill"/>
+    </Window.Background>
 </Window>

@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <UseHostCompilerIfAvailable>false</UseHostCompilerIfAvailable>
+  </PropertyGroup>
+</Project>
