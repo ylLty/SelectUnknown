@@ -9,7 +9,7 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Title="LoadWindow" Height="350" Width="620">
+        Title="Select Unknown" Height="350" Width="620">
     <Grid>
 
         <TextBlock Name="CopyrightInfo" Text="Copyright © 2026 yl_lty" Foreground="#F0F0F0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,5">

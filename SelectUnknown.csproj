@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-	  <UseWindowsForms>true</UseWindowsForms>
+	  <UseWindowsForms>True</UseWindowsForms>
 
 	  <ControlFlowGuard>UnGuard</ControlFlowGuard>
 	  <!--<AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -23,6 +23,8 @@
 	  <AssemblyVersion>1.0.0</AssemblyVersion>
 
 	  <Copyright>Copyright © 2026 yl_lty</Copyright>
+
+	  <ApplicationIcon>res\logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
@@ -30,7 +32,12 @@
   </Target>
 
   <ItemGroup>
+    <Content Include="res\logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="GlobalHotKey" Version="1.1.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
   </ItemGroup>
 
 </Project>

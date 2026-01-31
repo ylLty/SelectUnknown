@@ -1,0 +1,21 @@
+本项目自身使用 GPL-3.0 license 许可证，以下为使用的第三方开源库及其许可证，向这些开源库的开发者致以敬意！
+----------------
+.NET
+----------------
+https://github.com/microsoft/dotnet
+Copyright (c) 2019 Microsoft
+Licensed under The MIT License (MIT)
+
+----------------
+GlobalHotKey
+----------------
+https://github.com/kyrylomyr/GlobalHotKey
+Copyright (C) Kirill Miroshnichenko
+Licensed under GPL-3.0 license
+
+----------------
+MaterialDesignThemes
+----------------
+https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit
+Copyright (c) James Willock,  Mulholland Software and Contributors
+Licensed under The MIT License (MIT)

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using SelectUnknown.LogManagement;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
-using SelectUnknown.LogManagement;
 
 namespace SelectUnknown
 {
@@ -56,6 +57,7 @@ namespace SelectUnknown
             return "V" + assembly?.GetName().Version.ToString() ?? new Version(1, 0, 0, 0).ToString();
         }
         #endregion
+        static Mutex? _mutex;
         /// <summary>
         /// 初始化整个应用
         /// </summary>
@@ -63,7 +65,56 @@ namespace SelectUnknown
         {
             LogHelper.InitLog();
             LogHelper.Log("日志初始化成功!");
-            TrayHelper.InitTray("Select Unknown", "I:\\Five_ID_Num\\Five_ID_Num\\icon\\Five_ID_Num-32.png.ico");
+            // 防止软件重复启动
+            bool createdNew;
+            _mutex = new Mutex(true, "SelectUnknown_SingleInstance", out createdNew);
+            if (!createdNew)
+            {
+                MessageBox.Show("Select Unknown 已运行，请在托盘中找到 Select Unknown 图标并继续操作", "软件已在运行", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LogHelper.Log("软件已运行，取消启动", LogLevel.Warn);
+                System.Windows.Application application = System.Windows.Application.Current;
+                application.Shutdown(-403);
+                return;
+            }
+            LogHelper.Log("软件未运行，正常启动");
+
+            string resCheckResult = VerifyResources();
+            if (resCheckResult != "NoException")
+            {
+                MessageBox.Show($"必要的资源文件缺失：\n{resCheckResult}\n程序无法启动，请重新安装软件", "资源文件缺失", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogHelper.Log("必要的资源文件缺失，程序终止启动", LogLevel.Error);
+                System.Windows.Application application = System.Windows.Application.Current;
+                application.Shutdown(-404);
+                return;
+            }
+
+            TrayHelper.InitTray("Select Unknown", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res", "logo.ico"));
+            LogHelper.Log("托盘初始化成功!");
+        }
+        /// <summary>
+        /// 检验必要的资源文件是否存在
+        /// </summary>
+        /// <returns></returns>
+        private static string VerifyResources()
+        {
+            string resDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res");
+            if (!Directory.Exists(resDir))
+            {
+                LogHelper.Log($"资源文件夹缺失: {resDir}", LogLevel.Error);
+                return $"资源文件夹缺失: {resDir}";
+            }
+            string[] requiredFiles = { "logo.ico", "load-window.png" };
+            foreach (var file in requiredFiles)
+            {
+                string filePath = Path.Combine(resDir, file);
+                if (!File.Exists(filePath))
+                {
+                    LogHelper.Log($"缺失必要的资源文件: {filePath}", LogLevel.Error);
+                    return $"资源文件缺失: {filePath}";
+                }
+            }
+            LogHelper.Log("所有必要的资源文件均已存在");
+            return "NoException";
         }
     }
 }

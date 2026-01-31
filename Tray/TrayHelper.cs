@@ -24,13 +24,13 @@ public static class TrayHelper
         // 为托盘图标添加右键菜单
         var contextMenu = new ContextMenuStrip();
 
-        var configItem = new ToolStripMenuItem("配置", null, ConfigMenuItemClick);
+        var configItem = new ToolStripMenuItem("配置菜单", null, ConfigMenuItemClick);
         contextMenu.Items.Add(configItem);
 
         var logItem = new ToolStripMenuItem("打开日志", null, LogMenuItemClick);
         contextMenu.Items.Add(logItem);
 
-        var exitItem = new ToolStripMenuItem("退出", null, ExitMenuItemClick);
+        var exitItem = new ToolStripMenuItem("退出应用", null, ExitMenuItemClick);
         contextMenu.Items.Add(exitItem);
 
         _notifyIcon.ContextMenuStrip = contextMenu;
@@ -44,19 +44,23 @@ public static class TrayHelper
 
     private static void LogMenuItemClick(object? sender, EventArgs e)
     {
+        LogHelper.Log("用户通过托盘菜单打开了日志文件所在目录", LogLevel.Info);
         Process.Start("explorer.exe", $"/select,\"{LogHelper.logFilePath}\"");
     }
 
     private static void ConfigMenuItemClick(object? sender, EventArgs e)
     {
-        ConfigWindow configWindow = new ConfigWindow();
+        var configWindow = System.Windows.Application.Current.MainWindow;
         configWindow.Show();
+        configWindow.Activate();
+        LogHelper.Log("用户通过托盘菜单打开了配置窗口", LogLevel.Info);
     }
 
     // 托盘右键菜单的退出操作
     private static void ExitMenuItemClick(object? sender, EventArgs e)
     {
-        Cleanup();
+        Cleanup(); 
+        LogHelper.Log("托盘图标已被清理，应用程序即将退出", LogLevel.Info);
         Environment.Exit(0);  // 退出应用程序
     }
 
@@ -68,5 +72,6 @@ public static class TrayHelper
             _notifyIcon.Dispose();
             _notifyIcon = null;
         }
+        LogHelper.Log("托盘图标已被清理", LogLevel.Debug);
     }
 }

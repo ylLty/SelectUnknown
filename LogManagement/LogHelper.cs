@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SelectUnknown.LogManagement
 {
@@ -31,6 +32,7 @@ namespace SelectUnknown.LogManagement
         /// </summary>
         /// <param name="info"></param>
         /// <param name="level"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Log(string info, LogLevel level = LogLevel.Info)
         {
             string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss:fff}] [{level}] {info}";

@@ -6,34 +6,11 @@
         xmlns:local="clr-namespace:SelectUnknown"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
+        TextElement.Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+        Background="{DynamicResource MaterialDesign.Brush.Background}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
         Title="ConfigWindow" Height="630" Width="920">
-    <Window.Resources>
-        <Style x:Key="BtnInfoStyle" TargetType="Button">
-            <Setter Property="Width" Value="70"/>
-            <Setter Property="Height" Value="25"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="#dd898a"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
-                            <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#2f96b4"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#2a89a4"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources> 
-
 
     <Grid >
         <Grid.ColumnDefinitions>
@@ -41,8 +18,11 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <!--侧栏-->
-        <StackPanel Grid.Column="0" Margin="15">
-            <Button Content="abcd"></Button>
+        <StackPanel Grid.Column="0" Background="#FFF4E6DB">
+            <StackPanel Margin="15" >
+                <Button Content="常规设置"></Button>
+                <Button Content="热键设置" Margin="0,15"></Button>
+            </StackPanel>
         </StackPanel>
         <!--主区域-->
         <StackPanel Grid.Column="1">
