@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelectUnknown.Pages;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -40,6 +41,24 @@ namespace SelectUnknown
             this.Hide();
         }
 
-        
+        private void HotkeyButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void GeneralButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainFrame.Navigate(new GeneralPage());
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainFrame.Navigate(new AboutPage());
+        }
     }
 }

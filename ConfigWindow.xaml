@@ -12,21 +12,23 @@
         TextElement.FontSize="14"
         Title="ConfigWindow" Height="630" Width="920">
 
-    <Grid >
+    <Grid Cursor="" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="190"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <!--侧栏-->
-        <StackPanel Grid.Column="0" Background="#FFF4E6DB">
+        <StackPanel Grid.Column="0" Background="#FFBFD9DC">
             <StackPanel Margin="15" >
-                <Button Content="常规设置"></Button>
-                <Button Content="热键设置" Margin="0,15"></Button>
+                <Button Name="GeneralButton" Click="GeneralButton_Click" Content="常规设置"></Button>
+                <Button Name="HotkeyButton" Content="热键设置" Click="HotkeyButton_Click" Margin="0,15,0,0"></Button>
+                <Button Name="SearchButton" Content="搜索设置" Click="SearchButton_Click" Margin="0,15,0,0"></Button>
+                <Button Name="AboutButton" Content="关于软件" Click="AboutButton_Click" Margin="0,15,0,0"></Button>
             </StackPanel>
         </StackPanel>
         <!--主区域-->
-        <StackPanel Grid.Column="1">
-            <Button Content="test"></Button>
-        </StackPanel>
+        <Grid Grid.Column="1">
+            <Frame Name="mainFrame" Source="Pages\GeneralPage.xaml" NavigationUIVisibility="Hidden" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+        </Grid>
     </Grid>
 </Window>

@@ -59,5 +59,16 @@ namespace SelectUnknown.LogManagement
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             return Path.Combine(logPath, $"{timestamp}.log");
         }
+        /// <summary>
+        /// 打开日志文件夹
+        /// </summary>
+        public static void OpenLogDirectory()
+        {
+            if (!Directory.Exists(logPath))
+            {
+                Directory.CreateDirectory(logPath);
+            }
+            System.Diagnostics.Process.Start("explorer.exe", logPath);
+        }
     }
 }

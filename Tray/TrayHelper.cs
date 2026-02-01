@@ -45,7 +45,7 @@ public static class TrayHelper
     private static void LogMenuItemClick(object? sender, EventArgs e)
     {
         LogHelper.Log("用户通过托盘菜单打开了日志文件所在目录", LogLevel.Info);
-        Process.Start("explorer.exe", $"/select,\"{LogHelper.logFilePath}\"");
+        LogHelper.OpenLogDirectory();
     }
 
     private static void ConfigMenuItemClick(object? sender, EventArgs e)

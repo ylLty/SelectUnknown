@@ -57,6 +57,24 @@ namespace SelectUnknown
             return "V" + assembly?.GetName().Version.ToString() ?? new Version(1, 0, 0, 0).ToString();
         }
         #endregion
+        #region 公共方法
+        public static void OpenUrl(string url)
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log($"打开链接失败: {url}，异常信息: {ex.Message}", LogLevel.Error);
+            }
+        }
+        #endregion
         static Mutex? _mutex;
         /// <summary>
         /// 初始化整个应用
