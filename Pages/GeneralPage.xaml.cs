@@ -20,6 +20,7 @@ namespace SelectUnknown.Pages
     /// </summary>
     public partial class GeneralPage : Page
     {
+        public static GeneralPage Instance = new GeneralPage();
         public GeneralPage()
         {
             InitializeComponent();

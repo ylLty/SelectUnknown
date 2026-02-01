@@ -48,7 +48,7 @@ namespace SelectUnknown
 
         private void GeneralButton_Click(object sender, RoutedEventArgs e)
         {
-            mainFrame.Navigate(new GeneralPage());
+            mainFrame.Navigate(GeneralPage.Instance);
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -58,7 +58,7 @@ namespace SelectUnknown
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
-            mainFrame.Navigate(new AboutPage());
+            mainFrame.Navigate(AboutPage.Instance);
         }
     }
 }

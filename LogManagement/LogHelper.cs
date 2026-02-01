@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace SelectUnknown.LogManagement
 {
@@ -64,11 +65,7 @@ namespace SelectUnknown.LogManagement
         /// </summary>
         public static void OpenLogDirectory()
         {
-            if (!Directory.Exists(logPath))
-            {
-                Directory.CreateDirectory(logPath);
-            }
-            System.Diagnostics.Process.Start("explorer.exe", logPath);
+            Process.Start("explorer.exe", $"/select,\"{LogHelper.logFilePath}\"");
         }
     }
 }

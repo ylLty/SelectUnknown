@@ -21,6 +21,7 @@ namespace SelectUnknown.Pages
     /// </summary>
     public partial class AboutPage : Page
     {
+        public static readonly AboutPage Instance = new AboutPage();
         public AboutPage()
         {
             InitializeComponent();
