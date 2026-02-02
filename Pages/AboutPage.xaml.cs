@@ -58,5 +58,10 @@ namespace SelectUnknown.Pages
 
         }
 
+        private void VisitOpenSourceLicense_Click(object sender, RoutedEventArgs e)
+        {
+            LogHelper.Log("用户通过关于页面查看了开源许可证", LogLevel.Info);
+            Main.OpenUrl("https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/docs/open-source-license.txt");
+        }
     }
 }

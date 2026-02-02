@@ -6,9 +6,42 @@
       xmlns:local="clr-namespace:SelectUnknown.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      Background="#FFFFDFED"
       Title="GeneralPage" Cursor="">
 
-    <Grid>
-        <Button Content="test"></Button>
-    </Grid>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+        <StackPanel>
+            <!--每个配置项一个 Border-->
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+                <DockPanel>
+                    <CheckBox Name="IsStartUp" Checked="IsStartUp_Checked" Unchecked="IsStartUp_Unchecked" DockPanel.Dock="Right" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False"/>
+                    <TextBlock Text="开机自启" VerticalAlignment="Center" FontSize="14"/>
+                </DockPanel>
+                <!--阴影效果-->
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" 
+                         ShadowDepth="3" 
+                         Direction="270" 
+                         Opacity="0.5"
+                         Color="Black"/>
+                </Border.Effect>
+            </Border>
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+                <DockPanel>
+                    <CheckBox Name="SilentStart" Checked="SilentStart_Checked" Unchecked="SilentStart_Unchecked" DockPanel.Dock="Right" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False" Cursor="Hand"/>
+                    <TextBlock Text="静默启动" VerticalAlignment="Center" FontSize="14"/>
+                </DockPanel>
+                <!--阴影效果-->
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" 
+                         ShadowDepth="3" 
+                         Direction="270" 
+                         Opacity="0.5"
+                         Color="Black"/>
+                </Border.Effect>
+            </Border>
+            
+        </StackPanel>
+    </ScrollViewer>
+    <!--不是我不想用 Style，而是用 Style 会导致 md 设计无效-->
 </Page>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelectUnknown.ConfigManagment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,29 @@ namespace SelectUnknown.Pages
         public GeneralPage()
         {
             InitializeComponent();
+            IsStartUp.IsChecked = StartupManager.IsStartupEnabled(Main.APP_NAME);
+            SilentStart.IsChecked = Config.SilentStart;
+        }
+
+        private void IsStartUp_Checked(object sender, RoutedEventArgs e)
+        {
+            StartupManager.SetStartup(Main.APP_NAME, true);
+        }
+
+        private void IsStartUp_Unchecked(object sender, RoutedEventArgs e)
+        {
+            StartupManager.SetStartup(Main.APP_NAME, false);
+        }
+
+        private void SilentStart_Checked(object sender, RoutedEventArgs e)
+        {
+            Config.SilentStart = true;
+        }
+
+        private void SilentStart_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+            Config.SilentStart = false;
         }
     }
 }

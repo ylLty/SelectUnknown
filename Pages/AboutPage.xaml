@@ -8,20 +8,24 @@
       d:DesignHeight="630" d:DesignWidth="730"
       Title="AboutPage"
       Background="#FFFFDEED">
-    <Grid>
-        <StackPanel>
-            <Image Source="pack://siteoforigin:,,,/res/load-window.png" Width="730" HorizontalAlignment="Center" Stretch="Uniform"/>
-            <TextBlock Name="AppName" Text="Select Unknown" FontSize="36" FontWeight="Bold" Foreground="#FF333333" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-            <TextBlock Name="Version" Text="版本: 1.0.0" FontSize="18" Foreground="#FF555555" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-            <TextBlock Name="Copyright" Text="Copyright" FontSize="16" Foreground="#FF555555" HorizontalAlignment="Center"/>
+    <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
+        <Grid>
+            <StackPanel>
+                <Image Source="pack://siteoforigin:,,,/res/load-window.png" Width="730" HorizontalAlignment="Center" Stretch="Uniform"/>
+                <TextBlock Name="AppName" Text="Select Unknown" FontSize="36" FontWeight="Bold" Foreground="#FF333333" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <TextBlock Name="Version" Text="版本: 1.0.0" FontSize="18" Foreground="#FF555555" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Name="Copyright" Text="Copyright" FontSize="16" Foreground="#FF555555" HorizontalAlignment="Center"/>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Cursor="">
-                <Button Name="VisitDevSpace" Click="VisitDevSpace_Click" Content="作者主页" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD" Cursor="Hand"></Button>
-                <Button Name="VisitGithub" Click="VisitGithub_Click" Content="GitHub" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
-                <Button Name="Feedback" Click="Feedback_Click" Content="问题反馈" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
-                <Button Name="ViewLogs" Click="ViewLogs_Click" Content="查看日志" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
-                <Button Name="CheckUpdate" Click="CheckUpdate_Click" Content="检查更新" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Cursor="">
+                    <Button Name="VisitDevSpace" Click="VisitDevSpace_Click" Content="作者主页" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD" Cursor="Hand"></Button>
+                    <Button Name="VisitGithub" Click="VisitGithub_Click" Content="GitHub" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                    <Button Name="VisitOpenSourceLicense" Click="VisitOpenSourceLicense_Click" Content="开源许可" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                    <Button Name="Feedback" Click="Feedback_Click" Content="问题反馈" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                    <Button Name="ViewLogs" Click="ViewLogs_Click" Content="查看日志" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                    <Button Name="CheckUpdate" Click="CheckUpdate_Click" Content="检查更新" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
+    <!--用 Style 会导致 md 设计无效，所以没有用-->
 </Page>

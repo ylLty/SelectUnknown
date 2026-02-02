@@ -1,4 +1,6 @@
-﻿using SelectUnknown.LogManagement;
+﻿using SelectUnknown.ConfigManagment;
+using SelectUnknown.HotKey;
+using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -76,6 +78,7 @@ namespace SelectUnknown
         }
         #endregion
         static Mutex? _mutex;
+        private static bool isInitialized = false;
         /// <summary>
         /// 初始化整个应用
         /// </summary>
@@ -83,6 +86,12 @@ namespace SelectUnknown
         {
             LogHelper.InitLog();
             LogHelper.Log("日志初始化成功!");
+            if (isInitialized)
+            {
+                LogHelper.Log("发生异常: 应用已初始化", LogLevel.Error);
+                throw new InvalidOperationException("应用已初始化");
+            }
+            isInitialized = true;
             // 防止软件重复启动
             bool createdNew;
             _mutex = new Mutex(true, "SelectUnknown_SingleInstance", out createdNew);
@@ -108,6 +117,11 @@ namespace SelectUnknown
 
             TrayHelper.InitTray("Select Unknown", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res", "logo.ico"));
             LogHelper.Log("托盘初始化成功!");
+            HotKeyHelper.InitHotKey();
+            LogHelper.Log("热键初始化成功!");
+            LogHelper.Log("即将初始化配置");
+            ConfigManager.InitConfig();
+            LogHelper.Log("配置加载成功!");
         }
         /// <summary>
         /// 检验必要的资源文件是否存在
