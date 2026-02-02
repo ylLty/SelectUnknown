@@ -59,7 +59,7 @@ namespace SelectUnknown
         {
             Task.Run(async() =>
             {
-                Thread.Sleep(300);
+                Thread.Sleep(300);// 等待配置项变化完成
                 ConfigManagment.ConfigManager.SaveConfig();
             });
         }

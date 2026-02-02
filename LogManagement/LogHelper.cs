@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace SelectUnknown.LogManagement
 {
@@ -66,6 +68,74 @@ namespace SelectUnknown.LogManagement
         public static void OpenLogDirectory()
         {
             Process.Start("explorer.exe", $"/select,\"{LogHelper.logFilePath}\"");
+        }
+        public static void InitExpectionHandler()
+        {
+            // WPF UI线程异常
+            System.Windows.Application.Current.DispatcherUnhandledException += (sender, e) =>
+            {
+                HandleException(e.Exception, "DispatcherUnhandledException");
+                e.Handled = true; // 阻止崩溃
+            };
+
+            // 应用程序域异常
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                var exception = e.ExceptionObject as Exception;
+                HandleException(exception, "AppDomain UnhandledException");
+            };
+
+            // Task异常
+            TaskScheduler.UnobservedTaskException += (sender, e) =>
+            {
+                HandleException(e.Exception, "UnobservedTaskException");
+                e.SetObserved();
+            };
+        }
+
+        private static void HandleException(Exception ex, string source)
+        {
+            var logEntry = new
+            {
+                Timestamp = DateTime.UtcNow,
+                Source = source,
+                ExceptionType = ex.GetType().Name,
+                Message = ex.Message,
+                StackTrace = ex.StackTrace,
+                InnerException = ex.InnerException?.Message
+            };
+            
+
+            // 在UI线程显示错误
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                // 手动替换常见的转义字符
+                string formatted = JsonSerializer.Serialize(logEntry, JsonSerializerOptions.Default)
+                    .Replace("\\\"", "\"")      // 双引号
+                    .Replace("\\\\", "\\")      // 反斜杠
+                    .Replace("\\n", "\n")       // 换行
+                    .Replace("\\r", "\r")       // 回车
+                    .Replace("\\t", "\t")       // 制表符
+                    .Replace("\\b", "\b")       // 退格
+                    .Replace("\\f", "\f")       // 换页
+                    .Replace("\\/", "/");       // 斜杠
+
+                // 异步记录日志，避免阻塞UI
+                Task.Run(() => Log("致命错误！\n" + formatted + "\n来源：" + source, LogLevel.Error));
+
+                System.Windows.MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(
+                    "Select Unknown 软件运行时发生了未经处理的异常，无法继续运行\n按下确定打开日志文件，请将日志文件提交给作者\n" +
+                    formatted,
+                    "致命错误", 
+                    System.Windows.MessageBoxButton.OKCancel, 
+                    System.Windows.MessageBoxImage.Error
+                    );
+                if(messageBoxResult == System.Windows.MessageBoxResult.OK)
+                {
+                    OpenLogDirectory();
+                }
+            });
+            Environment.Exit(1); // 退出应用程序
         }
     }
 }

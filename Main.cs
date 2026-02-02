@@ -92,6 +92,10 @@ namespace SelectUnknown
                 throw new InvalidOperationException("应用已初始化");
             }
             isInitialized = true;
+
+            LogHelper.InitExpectionHandler();
+            LogHelper.Log("异常处理程序初始化成功!");
+
             // 防止软件重复启动
             bool createdNew;
             _mutex = new Mutex(true, "SelectUnknown_SingleInstance", out createdNew);
@@ -119,6 +123,7 @@ namespace SelectUnknown
             LogHelper.Log("托盘初始化成功!");
             HotKeyHelper.InitHotKey();
             LogHelper.Log("热键初始化成功!");
+
             LogHelper.Log("即将初始化配置");
             ConfigManager.InitConfig();
             LogHelper.Log("配置加载成功!");
