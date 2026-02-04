@@ -40,6 +40,20 @@
                          Color="Black"/>
                 </Border.Effect>
             </Border>
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+                <DockPanel>
+                    <TextBlock Text="日志自动清理时间（天）" VerticalAlignment="Center" FontSize="14"/>
+                    <TextBox Name="OldLogDeleteDays" Width="100" VerticalAlignment="Center" Margin="10,0,0,0" TextChanged="OldLogDeleteDays_TextChanged" Text="2" HorizontalAlignment="Right"/>
+                </DockPanel>
+                <!--阴影效果-->
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" 
+                         ShadowDepth="3" 
+                         Direction="270" 
+                         Opacity="0.5"
+                         Color="Black"/>
+                </Border.Effect>
+            </Border>
             
         </StackPanel>
     </ScrollViewer>

@@ -43,7 +43,6 @@
                     <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
                 </Border.Effect>
             </Border>
-            <materialDesign:Snackbar x:Name="MainSnackbar" MessageQueue="{materialDesign:MessageQueue}" />
         </StackPanel>
     </ScrollViewer>
 </Page>

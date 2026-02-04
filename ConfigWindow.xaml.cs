@@ -92,5 +92,10 @@ namespace SelectUnknown
         {
             mainFrame.Navigate(AboutPage.Instance);
         }
+
+        public void PopupMsg(string msg)
+        {
+            MainSnackbar.MessageQueue?.Enqueue(msg);
+        }
     }
 }

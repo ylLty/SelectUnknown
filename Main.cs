@@ -10,6 +10,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace SelectUnknown
 {
@@ -76,6 +78,22 @@ namespace SelectUnknown
                 LogHelper.Log($"打开链接失败: {url}，异常信息: {ex.Message}", LogLevel.Error);
             }
         }
+        /// <summary>
+        /// 在配置界面侧栏弹一条消息
+        /// </summary>
+        /// <param name="msg"></param>
+        public static void PopupMessageOnConfigWindow(string msg)
+        {
+            // 获取当前活动的 ConfigWindow 实例
+            foreach (Window window in System.Windows.Application.Current.Windows)
+            {
+                if (window is SelectUnknown.ConfigWindow configWindow)
+                {
+                    configWindow.PopupMsg(msg);
+                    break;
+                }
+            }
+        }
         #endregion
         static Mutex? _mutex;
         private static bool isInitialized = false;
@@ -121,6 +139,9 @@ namespace SelectUnknown
             LogHelper.Log("即将初始化配置");
             ConfigManager.InitConfig();
             LogHelper.Log("配置加载成功!");
+
+            LogHelper.Log($"{Config.OldLogDeleteDays}天前的旧日志即将被清理");
+            LogHelper.CleanOldLog(Config.OldLogDeleteDays, LogHelper.logPath);
 
             TrayHelper.InitTray("Select Unknown", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res", "logo.ico"));
             LogHelper.Log("托盘初始化成功!");

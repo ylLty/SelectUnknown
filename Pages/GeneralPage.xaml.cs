@@ -51,5 +51,26 @@ namespace SelectUnknown.Pages
             Config.SilentStart = false;
             StartupManager.SetStartup(Main.APP_NAME, (bool)IsStartUp.IsChecked);
         }
+
+        private void OldLogDeleteDays_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string stringValue = OldLogDeleteDays.Text;
+            int value;
+            try
+            {
+                value = int.Parse(stringValue);
+            }
+            catch
+            {
+                Main.PopupMessageOnConfigWindow("请输入有效的正整数数字");
+                return;
+            }
+            if(value <= 0)
+            {
+                Main.PopupMessageOnConfigWindow("请输入有效的正整数数字");
+                return;
+            }
+            Config.OldLogDeleteDays = value;
+        }
     }
 }

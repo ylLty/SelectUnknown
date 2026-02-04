@@ -12,6 +12,7 @@ namespace SelectUnknown.ConfigManagment
     {
         #region 常规设置
         public static bool SilentStart { get; set; } = false;
+        public static int OldLogDeleteDays { get; set; } = 2;
         #endregion
         #region 热键设置
         public static Key StartKey { get; set; } = Key.O;

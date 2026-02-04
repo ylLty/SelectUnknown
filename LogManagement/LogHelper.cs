@@ -29,7 +29,6 @@ namespace SelectUnknown.LogManagement
                 Directory.CreateDirectory(logPath);
             }
             logFilePath = GetLogFilePath();
-            CleanOldLog(2, logPath);// 清理旧的日志文件
         }
         /// <summary>
         /// 记录一条日志

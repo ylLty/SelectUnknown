@@ -32,7 +32,7 @@ namespace SelectUnknown.Pages
         {
             if (HotKeyHelper.SetStartHotKey() == 0)
             {
-                MainSnackbar.MessageQueue?.Enqueue("注册成功！");
+                Main.PopupMessageOnConfigWindow("热键注册成功！");
             }
         }
 
@@ -41,7 +41,7 @@ namespace SelectUnknown.Pages
         {
             if (HotKeyHelper.SetScreenshotHotKey() == 0)
             {
-                MainSnackbar.MessageQueue?.Enqueue("注册成功！");
+                Main.PopupMessageOnConfigWindow("热键注册成功！");
             }
         }
         static Key curStartKey;
