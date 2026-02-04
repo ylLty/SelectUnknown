@@ -1,4 +1,5 @@
-﻿using SelectUnknown.Pages;
+﻿using SelectUnknown.HotKeyMan;
+using SelectUnknown.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,10 +58,12 @@ namespace SelectUnknown
         /// <exception cref="NotImplementedException"></exception>
         private void GlobalPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Task.Run(async() =>
+            Task.Run(async () =>
             {
-                Thread.Sleep(300);// 等待配置项变化完成
+                Thread.Sleep(200);// 等待配置项变化完成
                 ConfigManagment.ConfigManager.SaveConfig();
+                ConfigManagment.ConfigManager.ReadConfig();
+                //HotKeyHelper.SetScreenshotHotKey();
             });
         }
 
@@ -72,7 +75,7 @@ namespace SelectUnknown
 
         private void HotkeyButton_Click(object sender, RoutedEventArgs e)
         {
-
+            mainFrame.Navigate(HotkeyPage.Instance);
         }
 
         private void GeneralButton_Click(object sender, RoutedEventArgs e)

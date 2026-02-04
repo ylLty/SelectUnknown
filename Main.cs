@@ -1,5 +1,5 @@
 ﻿using SelectUnknown.ConfigManagment;
-using SelectUnknown.HotKey;
+using SelectUnknown.HotKeyMan;
 using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
@@ -118,15 +118,14 @@ namespace SelectUnknown
                 application.Shutdown(-404);
                 return;
             }
+            LogHelper.Log("即将初始化配置");
+            ConfigManager.InitConfig();
+            LogHelper.Log("配置加载成功!");
 
             TrayHelper.InitTray("Select Unknown", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res", "logo.ico"));
             LogHelper.Log("托盘初始化成功!");
             HotKeyHelper.InitHotKey();
             LogHelper.Log("热键初始化成功!");
-
-            LogHelper.Log("即将初始化配置");
-            ConfigManager.InitConfig();
-            LogHelper.Log("配置加载成功!");
         }
         /// <summary>
         /// 检验必要的资源文件是否存在

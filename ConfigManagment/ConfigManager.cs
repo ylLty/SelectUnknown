@@ -28,14 +28,20 @@ namespace SelectUnknown.ConfigManagment
             }
             ReadConfig();
         }
-        private static void ReadConfig()
+        public static void ReadConfig()
         {
             string configFilePath = GetConfigFilePath();
             if (File.Exists(configFilePath))
             {
                 LogHelper.Log("读取配置文件内容", LogLevel.Info);
 
-                var json = File.ReadAllText(configFilePath);
+                string json = File.ReadAllText(configFilePath);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    LogHelper.Log("配置文件内容为空，无法读取内容，将重新创建", LogLevel.Warn);
+                    ResetConfig();
+                    json = File.ReadAllText(configFilePath);// 重新读取
+                }
 
                 var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
                 if (dict == null) return;
@@ -55,8 +61,8 @@ namespace SelectUnknown.ConfigManagment
             }
             else
             {
-                LogHelper.Log("配置文件不存在，无法读取内容", LogLevel.Error);
-                throw new FileNotFoundException("配置文件未找到", configFilePath);
+                LogHelper.Log("配置文件不存在，无法读取内容，将重新创建", LogLevel.Warn);
+                ResetConfig();
             }
         }
         /// <summary>

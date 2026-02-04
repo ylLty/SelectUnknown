@@ -29,6 +29,7 @@ namespace SelectUnknown.LogManagement
                 Directory.CreateDirectory(logPath);
             }
             logFilePath = GetLogFilePath();
+            CleanOldLog(2, logPath);// 清理旧的日志文件
         }
         /// <summary>
         /// 记录一条日志
@@ -49,6 +50,7 @@ namespace SelectUnknown.LogManagement
             {
                 writer.WriteLine(logMessage);
             }
+            Console.WriteLine(logMessage);
         }
         /// <summary>
         /// 获取日志文件路径
@@ -124,7 +126,7 @@ namespace SelectUnknown.LogManagement
                 Task.Run(() => Log("致命错误！\n" + formatted + "\n来源：" + source, LogLevel.Error));
 
                 System.Windows.MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(
-                    "Select Unknown 软件运行时发生了未经处理的异常，无法继续运行\n按下确定打开日志文件，请将日志文件提交给作者\n" +
+                    "Select Unknown 软件运行时发生了未经处理的异常，继续运行可能会出现问题\n按下确定打开日志文件，请将日志文件提交给作者\n按下取消继续运行\n" +
                     formatted,
                     "致命错误", 
                     System.Windows.MessageBoxButton.OKCancel, 
@@ -133,9 +135,49 @@ namespace SelectUnknown.LogManagement
                 if(messageBoxResult == System.Windows.MessageBoxResult.OK)
                 {
                     OpenLogDirectory();
+                    Environment.Exit(1); // 退出应用程序
                 }
             });
-            Environment.Exit(1); // 退出应用程序
+        }
+        /// <summary>
+        /// 清理旧的日志
+        /// </summary>
+        /// <param name="day"></param>
+        /// <param name="logDir"></param>
+        public static void CleanOldLog(int day, string logDir)
+        {
+            // 检查目录是否存在
+            if (!Directory.Exists(logDir))
+            {
+                Log("清理日志时发现指定的日志目录不存在！", LogLevel.Warn);
+                return;
+            }
+
+            // 获取所有 .log 文件
+            string[] logFiles = Directory.GetFiles(logDir, "*.log");
+
+            // 当前日期
+            DateTime currentDate = DateTime.Now;
+
+            foreach (string logFile in logFiles)
+            {
+                // 获取文件的最后修改时间
+                DateTime lastWriteTime = File.GetLastWriteTime(logFile);
+
+                // 如果文件修改日期超过指定天数，则删除
+                if ((currentDate - lastWriteTime).Days > day)
+                {
+                    try
+                    {
+                        File.Delete(logFile);
+                        Log($"已删除过期日志文件: {logFile}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"清理日志文件失败: {logFile}, 错误: {ex.Message}", LogLevel.Warn);
+                    }
+                }
+            }
         }
     }
 }

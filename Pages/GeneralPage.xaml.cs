@@ -42,12 +42,14 @@ namespace SelectUnknown.Pages
         private void SilentStart_Checked(object sender, RoutedEventArgs e)
         {
             Config.SilentStart = true;
+            StartupManager.SetStartup(Main.APP_NAME, (bool)IsStartUp.IsChecked);
         }
 
         private void SilentStart_Unchecked(object sender, RoutedEventArgs e)
         {
 
             Config.SilentStart = false;
+            StartupManager.SetStartup(Main.APP_NAME, (bool)IsStartUp.IsChecked);
         }
     }
 }
