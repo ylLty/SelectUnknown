@@ -7,10 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace SelectUnknown
@@ -92,6 +94,60 @@ namespace SelectUnknown
                     configWindow.PopupMsg(msg);
                     break;
                 }
+            }
+        }
+        private static readonly object _lock = new();
+        private static int _inProgress = 0;
+        /// <summary>
+        /// 安全的复制文本到剪切板
+        /// </summary>
+        /// <param name="value"></param>
+        public static void CopyToClipboard(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return;
+
+            // 防止重入（非常关键）
+            if (Interlocked.Exchange(ref _inProgress, 1) == 1)
+                return;
+
+            try
+            {
+                var dispatcher = System.Windows.Application.Current?.Dispatcher;
+                if (dispatcher == null)
+                    return;
+
+                dispatcher.BeginInvoke(
+                    DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        try
+                        {
+                            lock (_lock)
+                            {
+                                // 最安全的剪贴板写法
+                                System.Windows.Clipboard.SetDataObject(value, false);
+                            }
+                        }
+                        catch (COMException ex) when ((uint)ex.HResult == 0x800401D0)
+                        {
+                            // OpenClipboard 失败：忽略即可，绝不重试
+                        }
+                        catch
+                        {
+                            // 其他异常同样吞掉，避免污染 UI 线程
+                        }
+                    })
+                );
+            }
+            finally
+            {
+                // 稍微延迟释放，避免极端连点
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    Thread.Sleep(30);
+                    Interlocked.Exchange(ref _inProgress, 0);
+                });
             }
         }
         #endregion

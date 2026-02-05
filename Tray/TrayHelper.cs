@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using SelectUnknown.LogManagement;
+using SelectUnknown.Lens;
 
 public static class TrayHelper
 {
@@ -24,6 +25,9 @@ public static class TrayHelper
         // 为托盘图标添加右键菜单
         var contextMenu = new ContextMenuStrip();
 
+        var startItem = new ToolStripMenuItem("框索未知", null, StartMenuItemClick);
+        contextMenu.Items.Add(startItem);
+
         var configItem = new ToolStripMenuItem("配置菜单", null, ConfigMenuItemClick);
         contextMenu.Items.Add(configItem);
 
@@ -36,21 +40,44 @@ public static class TrayHelper
         _notifyIcon.ContextMenuStrip = contextMenu;
 
         // 托盘图标的双击事件
-        _notifyIcon.DoubleClick += (sender, args) =>
+        _notifyIcon.MouseDoubleClick += (sender, args) =>
         {
-            
+            //if (args.Button == MouseButtons.Left)
+            //{
+            //    var configWindow = System.Windows.Application.Current.MainWindow;
+            //    configWindow.Show();
+            //    configWindow.Activate();
+            //    LogHelper.Log("用户通过左键双击托盘图标打开了配置窗口", LogLevel.Info);
+            //}
+            // 暂时弃用双击打开配置窗口，改为单击开始框索未知
         };
+        _notifyIcon.MouseClick += (sender, args) =>
+        {
+            if (args.Button == MouseButtons.Left)
+            {
+                LensHelper.Start();
+                LogHelper.Log("用户通过左键单击托盘图标点击开始了框索未知", LogLevel.Info);
+            }
+        };
+    }
+
+    private static void StartMenuItemClick(object? sender, EventArgs e)
+    {
+        LensHelper.Start();
+        LogHelper.Log("用户通过托盘菜单开始了框索未知", LogLevel.Info);
+
     }
 
     private static void LogMenuItemClick(object? sender, EventArgs e)
     {
-        LogHelper.Log("用户通过托盘菜单打开了日志文件所在目录", LogLevel.Info);
         LogHelper.OpenLogDirectory();
+        LogHelper.Log("用户通过托盘菜单打开了日志文件所在目录", LogLevel.Info);
     }
 
     private static void ConfigMenuItemClick(object? sender, EventArgs e)
     {
         var configWindow = System.Windows.Application.Current.MainWindow;
+
         configWindow.Show();
         configWindow.Activate();
         LogHelper.Log("用户通过托盘菜单打开了配置窗口", LogLevel.Info);

@@ -1,13 +1,14 @@
-﻿using System;
+﻿using GlobalHotKey;
+using MaterialDesignThemes.Wpf;
+using SelectUnknown.ConfigManagment;
+using SelectUnknown.Lens;
+using SelectUnknown.LogManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using GlobalHotKey;
-using MaterialDesignThemes.Wpf;
-using SelectUnknown.ConfigManagment;
-using SelectUnknown.LogManagement;
 
 namespace SelectUnknown.HotKeyMan
 {
@@ -53,6 +54,7 @@ namespace SelectUnknown.HotKeyMan
         private static void StartHotkeyPressed(object? sender, KeyPressedEventArgs e)
         {
             LogHelper.Log("框定即搜热键被按下，执行框定即搜操作", LogLevel.Info);
+            LensHelper.Start();
         }
 
         public static int SetScreenshotHotKey()
