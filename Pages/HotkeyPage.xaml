@@ -13,7 +13,7 @@
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
         <StackPanel>
             <!-- Start Key -->
-            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="框定即搜快捷键">
                 <DockPanel>
                     <TextBlock Text="启动快捷键" VerticalAlignment="Center" FontSize="14" />
                     <TextBox Name="StartKeyInput" Width="200" VerticalAlignment="Center" 

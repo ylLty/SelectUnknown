@@ -26,7 +26,7 @@
                          Color="Black"/>
                 </Border.Effect>
             </Border>
-            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="启动时不显示此窗口（仅对开机自启动生效）">
                 <DockPanel>
                     <CheckBox Name="SilentStart" Checked="SilentStart_Checked" Unchecked="SilentStart_Unchecked" DockPanel.Dock="Right" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False" Cursor="Hand"/>
                     <TextBlock Text="静默启动" VerticalAlignment="Center" FontSize="14"/>
@@ -40,7 +40,7 @@
                          Color="Black"/>
                 </Border.Effect>
             </Border>
-            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="软件启动时将会自动清理设定天数前的日志文件">
                 <DockPanel>
                     <TextBlock Text="日志自动清理时间（天）" VerticalAlignment="Center" FontSize="14"/>
                     <TextBox Name="OldLogDeleteDays" Width="100" VerticalAlignment="Center" Margin="10,0,0,0" TextChanged="OldLogDeleteDays_TextChanged" Text="2" HorizontalAlignment="Right"/>
