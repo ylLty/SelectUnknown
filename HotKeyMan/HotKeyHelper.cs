@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace SelectUnknown.HotKeyMan
 {
@@ -89,6 +91,8 @@ namespace SelectUnknown.HotKeyMan
         private static void ScreenshotHotkeyPressed(object? sender, KeyPressedEventArgs e)
         {
             LogHelper.Log("截图热键被按下，执行截图操作", LogLevel.Info);
+            ScreencatchHelper.Screenshot();
+            Main.MousePopup("截图完成");
         }
     }
 }

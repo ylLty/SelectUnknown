@@ -34,12 +34,14 @@
                     </Border>
                     <!--框选工具-->
                     <Button Name="SelectRectangle" Click="SelectRectangle_Click" ToolTip="矩形选区" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="0,2,2,2" Width="25" Height="25">
-                        <materialDesign:PackIcon Kind="ButtonCursor"/>
+                        <materialDesign:PackIcon Kind="ButtonCursor" Foreground="#FF292929"/>
                     </Button>
                     <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
                     
                     <!--截图工具-->
-                    <Button Name="TakeColor" Click="TakeColor_Click" ToolTip="取色工具" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
+
+
+                    <Button Name="TakeColor" Click="TakeColor_Click" ToolTip="取色工具" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="Eyedropper" Foreground="#FF292929"/>
                     </Button>
                     

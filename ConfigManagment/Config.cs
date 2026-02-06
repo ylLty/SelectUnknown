@@ -1,10 +1,11 @@
-﻿using System;
+﻿using GlobalHotKey;
+using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using GlobalHotKey;
 
 namespace SelectUnknown.ConfigManagment
 {
@@ -13,6 +14,7 @@ namespace SelectUnknown.ConfigManagment
         #region 常规设置
         public static bool SilentStart { get; set; } = false;
         public static int OldLogDeleteDays { get; set; } = 2;
+        public static string ScreenshotFolderPath { get; set; } = "";
         #endregion
         #region 热键设置
         public static Key StartKey { get; set; } = Key.O;

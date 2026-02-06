@@ -1,9 +1,11 @@
-﻿using SelectUnknown.ConfigManagment;
+﻿using MaterialDesignThemes.Wpf;
+using SelectUnknown.ConfigManagment;
 using SelectUnknown.HotKeyMan;
 using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,8 +14,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Application = System.Windows.Application;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
 using MessageBox = System.Windows.Forms.MessageBox;
+using Point = System.Windows.Point;
 
 namespace SelectUnknown
 {
@@ -150,6 +160,179 @@ namespace SelectUnknown
                 });
             }
         }
+        public static bool IsPathValid(string path, bool allowEmpty = false)
+        {
+            // 1. 基本非空检查
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                if (allowEmpty)// 允许空路径(留空自动获取功能)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            try
+            {
+                // 2. 检查非法字符 (Windows 下通常包含 < > | " 等)
+                // GetInvalidPathChars 在不同系统（Win/Linux）下返回不同结果
+                if (path.Any(c => Path.GetInvalidPathChars().Contains(c)))
+                {
+                    return false;
+                }
+
+                // 3. 尝试获取完整路径
+                // 虽然 .NET 8 GetFullPath 较宽松，但它能处理基本的格式错误
+                string fullPath = Path.GetFullPath(path);
+
+                // 4. 针对 Windows 的特殊检查：冒号 (:)
+                // 在 Windows 中，冒号只能出现在盘符位置（如 C:\）
+                // GetFullPath 可能会放过 "C:\abc:def" 这种路径
+                int colonIndex = fullPath.IndexOf(':');
+                if (colonIndex != -1)
+                {
+                    // 如果有冒号，它必须是第二个字符（如 C:），且后面跟着分隔符
+                    // 或者是 UNC 路径（这里暂不深入 UNC 复杂性，仅处理常规盘符）
+                    if (colonIndex != 1) return false;
+                }
+
+                // 5. 检查路径是否包含无效的文件/目录名
+                // 比如 Windows 不允许文件名为 "CON", "PRN", "AUX" 等
+                // 或者文件名包含 * 或 ? (GetInvalidPathChars 有时漏掉这些)
+                string fileName = Path.GetFileName(fullPath);
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    if (fileName.Any(c => Path.GetInvalidFileNameChars().Contains(c)))
+                    {
+                        return false;
+                    }
+                }
+
+                // 6. 检查路径长度限制（可选）
+                // Windows 默认限制是 260 字符，除非开启了长路径支持
+                if (fullPath.Length >= 260) return false;
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // 捕获 ArgumentException, NotSupportedException 等
+                return false;
+            }
+        }
+        #region 鼠标消息弹窗
+        private static Window _currentWindow;
+        
+        /// <summary>
+        /// 鼠标消息
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="duration"></param>
+        public static async void MousePopup(string msg, int duration = 3000)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // 不搞队列：有就直接关
+                _currentWindow?.Close();
+                _currentWindow = null;
+
+                var text = new TextBlock
+                {
+                    Text = msg,
+                    Foreground = Brushes.White,
+                    FontSize = 13,
+                    Margin = new Thickness(12, 6, 12, 6),
+                    TextWrapping = TextWrapping.Wrap
+                };
+
+                var card = new Card
+                {
+                    Content = text,
+                    Background = new SolidColorBrush(Color.FromRgb(33, 33, 33)),
+                    Opacity = 0,
+                    RenderTransform = new TranslateTransform(0, 6)
+                };
+
+                var win = new Window
+                {
+                    Content = card,
+                    WindowStyle = WindowStyle.None,
+                    AllowsTransparency = true,
+                    Background = Brushes.Transparent,
+                    ShowInTaskbar = false,
+                    Topmost = true,
+                    SizeToContent = SizeToContent.WidthAndHeight,
+                    ShowActivated = false
+                };
+
+                // 鼠标位置
+                var pos = GetMousePosition();
+                win.Left = pos.X + 8;
+                win.Top = pos.Y + 18;
+
+                win.Show();
+
+                _currentWindow = win;
+
+                // 淡入 + 上移
+                var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(150));
+                var moveUp = new DoubleAnimation(6, 0, TimeSpan.FromMilliseconds(150));
+
+                card.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+                ((TranslateTransform)card.RenderTransform)
+                    .BeginAnimation(TranslateTransform.YProperty, moveUp);
+            });
+
+            await Task.Delay(duration);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (_currentWindow == null)
+                    return;
+
+                if (_currentWindow.Content is not Card card)
+                    return;
+
+                // 淡出 + 下移
+                var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(200));
+                var moveDown = new DoubleAnimation(0, 6, TimeSpan.FromMilliseconds(200));
+
+                fadeOut.Completed += (_, _) =>
+                {
+                    _currentWindow?.Close();
+                    _currentWindow = null;
+                };
+
+                card.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+                ((TranslateTransform)card.RenderTransform)
+                    .BeginAnimation(TranslateTransform.YProperty, moveDown);
+            });
+        }
+
+        private static Point GetMousePosition()
+        {
+            return GetCursorScreenPosition();
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern bool GetCursorPos(out POINT lpPoint);
+
+        public static Point GetCursorScreenPosition()
+        {
+            GetCursorPos(out var p);
+            return new Point(p.X, p.Y);
+        }
+        #endregion
         #endregion
         static Mutex? _mutex;
         private static bool isInitialized = false;

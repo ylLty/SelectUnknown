@@ -54,6 +54,22 @@
                          Color="Black"/>
                 </Border.Effect>
             </Border>
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="截图保存位置，留空将自动获取图片文件夹">
+                <DockPanel>
+                    <TextBlock Text="截图文件夹路径" VerticalAlignment="Center" FontSize="14" HorizontalAlignment="Left"/>
+                    <TextBox Name="ScreenshotPath" Width="200" VerticalAlignment="Center" Margin="10,0,0,0" TextChanged="ScreenshotPath_TextChanged" Text="" LostFocus="ScreenshotPath_LostFocus" HorizontalAlignment="Right"/>
+                    <Button Name="Browse" Content="浏览..." Click="Browse_Click" Width="75" VerticalAlignment="Center" Margin="10,0,0,0" Background="#FFE89ABD" BorderBrush="#FFE89ABD" HorizontalAlignment="Left"/>
+                    <Button Name="OpenScrshotFolder" Content="打开文件夹" Click="OpenScrshotFolder_Click" Width="100" VerticalAlignment="Center" Margin="10,0,0,0" Background="#FFE89ABD" BorderBrush="#FFE89ABD" HorizontalAlignment="Right"/>
+                </DockPanel>
+                <!--阴影效果-->
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" 
+                         ShadowDepth="3" 
+                         Direction="270" 
+                         Opacity="0.5"
+                         Color="Black"/>
+                </Border.Effect>
+            </Border>
             
         </StackPanel>
     </ScrollViewer>

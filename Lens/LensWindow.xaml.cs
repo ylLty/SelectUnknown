@@ -32,9 +32,7 @@ namespace SelectUnknown
         {
             switch (e.Key) { 
                 case Key.Escape:
-                    BackgroundImage.Source = null;
-                    ScreenImage.Source = null;
-                    this.Close();
+                    ShutdownWindow();
                     break;
                 case Key.Back:
                     if (BackgroundImage.Opacity == BackgroundImgDefaultOpacity)
@@ -45,10 +43,23 @@ namespace SelectUnknown
                     {
                         ShowBackgroundImg(200);
                     }
-                        break;
+                    break;
             }
         }
+        private void ShutdownWindow()
+        {
+            BackgroundImage.Source = null;
+            BackgroundImage.UpdateLayout();
+            ScreenImage.Source = null;
+            ScreenImage.UpdateLayout();
+            this.DataContext = null;
+            //取消订阅事件
+            ScreenImage.PreviewMouseDown -= TakeColorHex;
 
+            this.Close();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // 淡入背景氛围图动画
@@ -111,6 +122,7 @@ namespace SelectUnknown
             ScreenImage.PreviewMouseDown -= TakeColorHex;
             ScreenImage.Cursor = System.Windows.Input.Cursors.Arrow;
             ShowBackgroundImg(200, BackgroundImgDefaultOpacity);// 恢复背景图
+            Main.MousePopup($"已复制颜色值 {colorHex} 到剪贴板", 1200);
             LogHelper.Log($"取色完毕，颜色为 {colorHex}");
         }
 

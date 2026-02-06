@@ -54,7 +54,7 @@ namespace SelectUnknown.LogManagement
         /// <summary>
         /// 获取日志文件路径
         /// </summary>
-        private static string GetLogPath()
+        public static string GetLogPath()
         {
             return Path.Combine(Path.GetTempPath(), "SelectUnknown", "logs");
         }
