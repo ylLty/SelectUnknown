@@ -18,12 +18,12 @@ namespace SelectUnknown.Lens
         /// <summary>
         /// 开始框定即搜
         /// </summary>
-        public static void Start()
+        public static void Start(string selectedWords = "")
         {
             var bmp = CaptureScreen();
             var source = ConvertToBitmapSource(bmp);
 
-            LensWindow lensWindow = new LensWindow(source);
+            LensWindow lensWindow = new LensWindow(source, selectedWords);
             lensWindow.Show();
             lensWindow.Activate();
         }

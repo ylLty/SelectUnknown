@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using Clipboard = System.Windows.Clipboard;
 using SelectUnknown.LogManagement;
+using Microsoft.Web.WebView2.Core;
 
 namespace SelectUnknown
 {
@@ -22,7 +23,7 @@ namespace SelectUnknown
     /// </summary>
     public partial class LensWindow : Window
     {
-        public LensWindow(BitmapSource scrImg)
+        public LensWindow(BitmapSource scrImg, string selectedWords = "")
         {
             InitializeComponent();
             ScreenImage.Source = scrImg;
@@ -44,8 +45,21 @@ namespace SelectUnknown
                         ShowBackgroundImg(200);
                     }
                     break;
+                case Key.Tab:
+                    if (Browser.Visibility == Visibility.Visible)
+                    {
+                        Browser.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        Browser.Visibility = Visibility.Visible;
+                    }
+                    break;
             }
         }
+        /// <summary>
+        /// 关闭窗口并释放一定资源
+        /// </summary>
         private void ShutdownWindow()
         {
             BackgroundImage.Source = null;
@@ -53,8 +67,19 @@ namespace SelectUnknown
             ScreenImage.Source = null;
             ScreenImage.UpdateLayout();
             this.DataContext = null;
+            webView = null;
+
             //取消订阅事件
             ScreenImage.PreviewMouseDown -= TakeColorHex;
+            ShowInBrowser.Click -= ShowInBrowser_Click;
+            Minisize.Click -= Minisize_Click;
+            this.Loaded -= Window_Loaded;
+            SelectRectangle.Click -= SelectRectangle_Click;
+            if (webView != null && webView.CoreWebView2 != null)
+            {
+                webView.CoreWebView2.NewWindowRequested -= webView_NewWindowRequested;
+            }
+            TakeColor.Click -= TakeColor_Click;
 
             this.Close();
             GC.Collect();
@@ -65,6 +90,22 @@ namespace SelectUnknown
             // 淡入背景氛围图动画
             ShowBackgroundImg(300);
         }
+        private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            webView.CoreWebView2.NewWindowRequested += webView_NewWindowRequested;
+        }
+        private void webView_NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
+        {
+            // 获取新窗口尝试加载的URL
+            string newUrl = e.Uri;
+
+            // 1. 将原窗口重定向到新URL
+            webView.CoreWebView2.Navigate(newUrl);
+
+            // 2. 标记该事件已被处理，阻止新建窗口/标签页
+            e.Handled = true;
+        }
+
         const double BackgroundImgDefaultOpacity = 0.3;
         /// <summary>
         /// 隐藏背景氛围图
@@ -199,7 +240,6 @@ namespace SelectUnknown
         }
         #endregion
         #region 工具栏拖动
-        private System.Windows.Point _startPoint;
         private System.Windows.Point _lastMouseDown;
         private bool _isDragging;
         private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -232,5 +272,57 @@ namespace SelectUnknown
             }
         }
         #endregion
+        private void ShowInBrowser_Click(object sender, RoutedEventArgs e)
+        {
+            Main.OpenUrl(AddressBar.Text);
+            ShutdownWindow();
+        }
+
+        private void Minisize_Click(object sender, RoutedEventArgs e)
+        {
+            Browser.Visibility = Visibility.Collapsed;
+            Main.MousePopup("按 Tab 键可恢复显示", 1200);
+        }
+        #region 浏览器拖动
+        private System.Windows.Point _lastMouseDown1;
+        private bool _isDragging1;
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging1 = true;
+            _lastMouseDown1 = e.GetPosition(this); // 获取相对于窗口/父容器的坐标
+            ((UIElement)sender).CaptureMouse();
+        }
+
+        private void Border_MouseMove_1(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_isDragging1)
+            {
+                System.Windows.Point currentPosition = e.GetPosition(this);
+                // 计算鼠标位移量
+                double offsetX = currentPosition.X - _lastMouseDown1.X;
+                double offsetY = currentPosition.Y - _lastMouseDown1.Y;
+
+                // 更新平移变换
+                BrowserDragTransform.X += offsetX;
+                BrowserDragTransform.Y += offsetY;
+                ////给 Webview 的也更新一下，不然不会跟着跑 //不行，根本没用, 反会出现偏移
+                //WebviewDragTransform.X += offsetX;
+                //WebviewDragTransform.Y += offsetY;
+                webView.InvalidateVisual();
+                webView.UpdateLayout();
+                Browser.InvalidateVisual();
+                Browser.UpdateLayout();
+
+                _lastMouseDown1 = currentPosition;
+            }
+        }
+
+        private void Border_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging1 = false;
+            ((UIElement)sender).ReleaseMouseCapture();
+        }
+        #endregion
+
     }
 }

@@ -20,3 +20,10 @@ MaterialDesignThemes
 https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit
 Copyright (c) James Willock,  Mulholland Software and Contributors
 Licensed under The MIT License (MIT)
+
+----------------
+Microsoft.Web.WebView2
+----------------
+https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.3719.77
+Copyright (C) Microsoft Corporation. All rights reserved.
+License : https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.3719.77/license

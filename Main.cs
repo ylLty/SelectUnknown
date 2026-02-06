@@ -333,7 +333,39 @@ namespace SelectUnknown
             return new Point(p.X, p.Y);
         }
         #endregion
+        /// <summary>
+        /// 获取用户当前选择的文本
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSelectedText()
+        {
+            // 保存当前剪贴板内容，避免覆盖用户原有的数据
+            var oldText = System.Windows.Forms.Clipboard.GetText();
+
+            // 发送 Ctrl+C 快捷键 (需引用 System.Windows.Forms)
+            System.Windows.Forms.SendKeys.SendWait("^c");
+
+            // 给系统一点响应时间
+            System.Threading.Thread.Sleep(100);
+
+            string selectedText = System.Windows.Forms.Clipboard.GetText();
+
+            // 内容相同表明没选择
+            if (oldText == selectedText)
+            {
+                LogHelper.Log("用户没有选择文本");
+                return "";
+            }
+
+            // 恢复原剪贴板内容
+            System.Windows.Forms.Clipboard.SetText(oldText);
+            LogHelper.Log("已提取用户选择的文本：**SECRET**");
+            return selectedText;
+        }
         #endregion
+
+        #region 程序启动相关
+
         static Mutex? _mutex;
         private static bool isInitialized = false;
         /// <summary>
@@ -360,8 +392,7 @@ namespace SelectUnknown
             {
                 MessageBox.Show("Select Unknown 已运行，请在托盘中找到 Select Unknown 图标并继续操作", "软件已在运行", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 LogHelper.Log("软件已运行，取消启动", LogLevel.Warn);
-                System.Windows.Application application = System.Windows.Application.Current;
-                application.Shutdown(-403);
+                Environment.Exit(183);// Win32 错误代码：ERROR_ALREADY_EXISTS 这边顺便用一下
                 return;
             }
             LogHelper.Log("软件未运行，正常启动");
@@ -371,8 +402,7 @@ namespace SelectUnknown
             {
                 MessageBox.Show($"必要的资源文件缺失：\n{resCheckResult}\n程序无法启动，请重新安装软件", "资源文件缺失", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogHelper.Log("必要的资源文件缺失，程序终止启动", LogLevel.Error);
-                System.Windows.Application application = System.Windows.Application.Current;
-                application.Shutdown(-404);
+                Environment.Exit(2);
                 return;
             }
             LogHelper.Log("即将初始化配置");
@@ -399,7 +429,7 @@ namespace SelectUnknown
                 LogHelper.Log($"资源文件夹缺失: {resDir}", LogLevel.Error);
                 return $"资源文件夹缺失: {resDir}";
             }
-            string[] requiredFiles = { "logo.ico", "load-window.png" };
+            string[] requiredFiles = { "logo.ico", "load-window.png", "background.png" };
             foreach (var file in requiredFiles)
             {
                 string filePath = Path.Combine(resDir, file);
@@ -412,5 +442,6 @@ namespace SelectUnknown
             LogHelper.Log("所有必要的资源文件均已存在");
             return "NoException";
         }
+        #endregion
     }
 }

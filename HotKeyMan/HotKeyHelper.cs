@@ -56,7 +56,8 @@ namespace SelectUnknown.HotKeyMan
         private static void StartHotkeyPressed(object? sender, KeyPressedEventArgs e)
         {
             LogHelper.Log("框定即搜热键被按下，执行框定即搜操作", LogLevel.Info);
-            LensHelper.Start();
+            string selectedWords = Main.GetSelectedText();
+            LensHelper.Start(selectedWords);
         }
 
         public static int SetScreenshotHotKey()
@@ -92,7 +93,7 @@ namespace SelectUnknown.HotKeyMan
         {
             LogHelper.Log("截图热键被按下，执行截图操作", LogLevel.Info);
             ScreencatchHelper.Screenshot();
-            Main.MousePopup("截图完成");
+            Main.MousePopup("截图已保存");
         }
     }
 }
