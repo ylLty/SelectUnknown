@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Web.WebView2.Core;
+using SelectUnknown.LogManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +11,11 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Media.Animation;
+using static System.Net.WebRequestMethods;
 using Clipboard = System.Windows.Clipboard;
-using SelectUnknown.LogManagement;
-using Microsoft.Web.WebView2.Core;
 
 namespace SelectUnknown
 {
@@ -23,12 +24,19 @@ namespace SelectUnknown
     /// </summary>
     public partial class LensWindow : Window
     {
+        string searchUri = Main.GetSEHomeUrl();
         public LensWindow(BitmapSource scrImg, string selectedWords = "")
         {
             InitializeComponent();
             ScreenImage.Source = scrImg;
+            if (!string.IsNullOrWhiteSpace(selectedWords))
+            {
+                searchUri = Main.GetSESearchingUrl(selectedWords);
+                MainText.Text = selectedWords;
+            }
+            Clipboard.SetImage(scrImg);
         }
-
+       
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             switch (e.Key) { 
@@ -67,6 +75,7 @@ namespace SelectUnknown
             ScreenImage.Source = null;
             ScreenImage.UpdateLayout();
             this.DataContext = null;
+            webView.Dispose();
             webView = null;
 
             //取消订阅事件
@@ -85,14 +94,50 @@ namespace SelectUnknown
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // 淡入背景氛围图动画
             ShowBackgroundImg(300);
+
+            ShowLensControls(300);
+            await webView.EnsureCoreWebView2Async();
+            if (ConfigManagment.Config.UsingAndroidUserAgent)
+            {
+                webView.CoreWebView2.Settings.UserAgent = Main.GetWebViewUserAgent();//设置为安卓 UA
+            }
         }
         private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            webView.CoreWebView2.NewWindowRequested += webView_NewWindowRequested;
+            if (webView != null && webView.CoreWebView2 != null)
+            {
+                webView.CoreWebView2.NewWindowRequested += webView_NewWindowRequested;
+            }
+        }
+        bool isFirstNavigation = true;
+        private void webView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
+        {
+            if (isFirstNavigation)
+            {
+                webView_FirstNavigationStarting(sender, e);
+            }
+            isFirstNavigation = false;
+            if (webView != null && webView.CoreWebView2 != null)
+            {
+
+            }
+        }
+        /// <summary>
+        /// webView加载完成时调用
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void webView_FirstNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
+        {
+            if (webView != null && webView.CoreWebView2 != null)
+            {
+                webView.CoreWebView2.Navigate(searchUri);
+            }
+            searchUri = "";
         }
         private void webView_NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
         {
@@ -140,10 +185,31 @@ namespace SelectUnknown
 
             BackgroundImage.BeginAnimation(UIElement.OpacityProperty, animation);
         }
+        /// <summary>
+        /// 淡入控件
+        /// </summary>
+        /// <param name="duration"></param>
+        /// <param name="value"></param>
+        void ShowLensControls(int duration)
+        {
+            TextProcess.Opacity = 0.0;
+            Browser.Opacity = 0.0;
+            ToolBox.Opacity = 0.0;
+            var animation = new DoubleAnimation
+            {
+                From = 0.0,
+                To = 1.0,
+                Duration = TimeSpan.FromMilliseconds(duration),
+                FillBehavior = FillBehavior.HoldEnd
+            };
 
+            TextProcess.BeginAnimation(UIElement.OpacityProperty, animation);
+            Browser.BeginAnimation(UIElement.OpacityProperty, animation);
+            ToolBox.BeginAnimation(UIElement.OpacityProperty, animation);
+        }
         private void SelectRectangle_Click(object sender, RoutedEventArgs e)
         {
-
+            LogHelper.Log("用户选择了框选工具");
         }
         #region 取色工具
         private void TakeColor_Click(object sender, RoutedEventArgs e)
@@ -323,6 +389,74 @@ namespace SelectUnknown
             ((UIElement)sender).ReleaseMouseCapture();
         }
         #endregion
+        #region 文本处理框拖动
+        private System.Windows.Point _lastMouseDownText;
+        private bool _isDraggingText;
+        private void Border_MouseDown_1(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingText = true;
+            _lastMouseDownText = e.GetPosition(this); // 获取相对于窗口/父容器的坐标
+            ((UIElement)sender).CaptureMouse();
+        }
 
+        private void Border_MouseMove_2(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_isDraggingText)
+            {
+                System.Windows.Point currentPosition = e.GetPosition(this);
+                // 计算鼠标位移量
+                double offsetX = currentPosition.X - _lastMouseDownText.X;
+                double offsetY = currentPosition.Y - _lastMouseDownText.Y;
+
+                // 更新平移变换
+                TextProcessDragTransform.X += offsetX;
+                TextProcessDragTransform.Y += offsetY;
+
+                _lastMouseDownText = currentPosition;
+            }
+        }
+
+        private void Border_MouseUp_1(object sender, MouseButtonEventArgs e)
+        {
+            _isDraggingText = false;
+            ((UIElement)sender).ReleaseMouseCapture();
+        }
+        #endregion
+
+        private void CopyAllText_Click(object sender, RoutedEventArgs e)
+        {
+            Main.CopyToClipboard(MainText.Text);
+            Main.MousePopup("内容已复制到剪切板");
+        }
+
+
+        private void Translate_Click(object sender, RoutedEventArgs e)
+        {
+            string text = MainText.Text;
+            if(!string.IsNullOrEmpty(MainText.SelectedText))
+            {
+                text = MainText.SelectedText;
+            }
+            string translateUri = $"https://translate.google.com/?hl=zh-cn&sl=auto&tl=zh-CN&text={text}&op=translate";
+            webView.CoreWebView2.Navigate(translateUri);
+            LogHelper.Log("用户进行了一次从文本处理框中翻译");
+        }
+
+        private void SearchSelectedText_Click(object sender, RoutedEventArgs e)
+        {
+            string text = MainText.Text;
+            if (!string.IsNullOrEmpty(MainText.SelectedText))
+            {
+                text = MainText.SelectedText;
+            }
+            searchUri = Main.GetSESearchingUrl(text);
+            webView.CoreWebView2.Navigate(searchUri);
+            LogHelper.Log("用户进行了一次从文本处理框中搜索");
+        }
+        private void MainText_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // 防止应失去焦点而取消选择文本
+            e.Handled = true;
+        }
     }
 }

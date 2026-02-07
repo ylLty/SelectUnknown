@@ -22,5 +22,9 @@ namespace SelectUnknown.ConfigManagment
         public static Key ScreenshotKey { get; set; } = Key.I;
         public static ModifierKeys[] ScreenshotModifierKeys { get; set; } = { ModifierKeys.Control, ModifierKeys.Alt };
         #endregion
+        #region 服务设置
+        public static string SearchEngineName { get; set; } = "Google";
+        public static bool UsingAndroidUserAgent { get; set; } = true;
+        #endregion
     }
 }

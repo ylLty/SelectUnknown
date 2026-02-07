@@ -19,9 +19,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using static System.Net.WebRequestMethods;
 using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
+using File = System.IO.File;
 using MessageBox = System.Windows.Forms.MessageBox;
 using Point = System.Windows.Point;
 
@@ -358,9 +360,67 @@ namespace SelectUnknown
             }
 
             // 恢复原剪贴板内容
-            System.Windows.Forms.Clipboard.SetText(oldText);
+            try
+            {
+                System.Windows.Forms.Clipboard.SetText(oldText);
+            }
+            catch { }//静默捕获，免得用户提前复制了图片出问题
+            
             LogHelper.Log("已提取用户选择的文本：**SECRET**");
             return selectedText;
+        }
+        /// <summary>
+        /// 获取搜索引擎首页链接
+        /// </summary>
+        public static string GetSEHomeUrl()
+        {
+            switch (Config.SearchEngineName)
+            {
+                case "Google":
+                    return "https://www.google.com/";
+                case "夸克":
+                    return "https://ai.quark.cn/";// 安卓 UI 标识不可用，强制要求下载。
+                case "Bing (海外版)":
+                    return "https://www.bing.com/";//需要挂全局梯子，否则会重定向到必应中国（Edge 浏览器还会识别浏览器配置）
+                case "必应":
+                    return "https://cn.bing.com/";
+                case "百度":
+                    return "https://www.baidu.com/";
+                case "Yandex":
+                    return "https://www.yandex.com/";
+                default:
+                    return "https://cn.bing.com/";//默认必应 毕竟是一个比较折中的搜索引擎(国内可访问, 体验较好, 虽然也开始收割用户了)
+            }
+        }
+        /// <summary>
+        /// 获取搜索链接
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSESearchingUrl(string searchingText)
+        {
+            switch (Config.SearchEngineName)
+            {//{searchingText} 直接放浏览器里面搜索这个就行了
+                case "Google":
+                    return $"https://www.google.com/search?q={searchingText}";
+                case "夸克":
+                    return $"https://ai.quark.cn/s/?q={searchingText}";
+                case "Bing (海外版)":
+                    return $"https://www.bing.com/search?q={searchingText}";//需要挂全局梯子，否则会重定向到必应中国（Edge 浏览器还会识别浏览器配置）
+                case "必应":
+                    return $"https://cn.bing.com/search?q={searchingText}";
+                case "百度":
+                    return $"https://www.baidu.com/s?wd={searchingText}";
+                case "Yandex":
+                    return $"https://yandex.com/search/?text={searchingText}";
+                default:
+                    return $"https://cn.bing.com/search?q={searchingText}";//默认必应 毕竟是一个比较折中的搜索引擎(国内可访问, 体验较好, 虽然也开始收割用户了)
+            }
+        }
+
+        internal static string GetWebViewUserAgent()// 现在只给了安卓 UA 自定义选项, 以后可能会加更多选项, 所以先留着这个方法占位
+        {
+            //Android Edge
+            return "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36 EdgA/144.0.0.0";
         }
         #endregion
 
@@ -442,6 +502,8 @@ namespace SelectUnknown
             LogHelper.Log("所有必要的资源文件均已存在");
             return "NoException";
         }
+
+        
         #endregion
     }
 }

@@ -36,10 +36,11 @@
                     <Button Name="SelectRectangle" Click="SelectRectangle_Click" ToolTip="矩形选区" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="0,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="ButtonCursor" Foreground="#FF292929"/>
                     </Button>
+                    
                     <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
                     
                     <!--截图工具-->
-
+                    
 
                     <Button Name="TakeColor" Click="TakeColor_Click" ToolTip="取色工具" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="Eyedropper" Foreground="#FF292929"/>
@@ -49,15 +50,12 @@
                 
             </Grid>
             <Border.Effect>
-                <DropShadowEffect BlurRadius="10" 
-                                  ShadowDepth="3" 
-                                  Direction="270" 
-                                  Opacity="0.5"
-                                  Color="Black"/>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
             </Border.Effect>
             <Border.RenderTransform>
                 <TranslateTransform x:Name="dragTransform"/>
             </Border.RenderTransform>
+            
         </Border>
 
         <Grid Name="Browser" Background="Transparent" Width="450" Height="800" HorizontalAlignment="Right" Margin="0,0,25,0">
@@ -68,24 +66,61 @@
                         <Border Background="AliceBlue" Cursor="SizeAll" Width="15" Margin="15,12,0,6" MouseDown="Border_MouseDown" MouseMove="Border_MouseMove_1" MouseUp="Border_MouseUp">
                             <materialDesign:PackIcon Kind="Drag" VerticalAlignment="Center"/>
                         </Border>
-                        
-                        <TextBox x:Name="AddressBar" Height="30" Width="280" Margin="8,6,15,0" Text="{Binding ElementName=webView, Path=Source}" AcceptsReturn="False" IsReadOnly="True" VerticalAlignment="Center"/>
+
+                        <TextBox x:Name="AddressBar" ToolTip="浏览器中打开" Height="30" Width="280" Margin="8,6,15,0" Text="{Binding ElementName=webView, Path=Source}" AcceptsReturn="False" IsReadOnly="True" VerticalAlignment="Center"/>
                         <Button x:Name="ShowInBrowser" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="40" Height="40" Margin="0,6,0,0" Click="ShowInBrowser_Click" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="OpenInNew" Foreground="AliceBlue"/>
                         </Button>
-                        <Button x:Name="Minisize" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="40" Height="40" Margin="15,6,0,0" Click="Minisize_Click" VerticalAlignment="Center">
+                        <Button x:Name="Minisize" ToolTip="最小化" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="40" Height="40" Margin="15,6,0,0" Click="Minisize_Click" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="WindowMinimize" Foreground="AliceBlue"/>
                         </Button>
                     </StackPanel>
                     
                     
                     <Border x:Name="WebView" BorderBrush="AliceBlue" Margin="15,60,15,15">
-                        <wv2:WebView2 x:Name="webView" Source="https://google.com/" NavigationCompleted="webView_NavigationCompleted"></wv2:WebView2>
+                        <wv2:WebView2 x:Name="webView" Source="https://google.com/" NavigationCompleted="webView_NavigationCompleted" NavigationStarting="webView_NavigationStarting"></wv2:WebView2>
                     </Border>
                 </Grid>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
+                </Border.Effect>
             </Border>
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="BrowserDragTransform" />
+            </Grid.RenderTransform>
+        </Grid>
+        <Grid x:Name="TextProcess" Width="350" Height="190" HorizontalAlignment="Left" Margin="25,0,0,0">
+            <Border Background="#F4E5D9" CornerRadius="15">
+                <Grid>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" Margin="8">
+                        <!--拖拽-->
+                        <Border Background="#F4E5D9" Cursor="SizeAll" Width="15" Margin="0" MouseDown="Border_MouseDown_1" MouseMove="Border_MouseMove_2" MouseUp="Border_MouseUp_1">
+                            <materialDesign:PackIcon Kind="Drag" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8">
+                        <Button x:Name="Translate" ToolTip="翻译选定文本（未选定则翻译全部）" Style="{DynamicResource MaterialDesignFloatingActionButton}" Background="#BBA08C" BorderBrush="#BBA08C" Width="25" Height="25" Margin="15,0,0,0" Click="Translate_Click" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <materialDesign:PackIcon Kind="Translate" Foreground="AliceBlue"/>
+                        </Button>
+                        <Button x:Name="CopyAllText" ToolTip="复制所有文本" Style="{DynamicResource MaterialDesignFloatingActionButton}" Background="#BBA08C" BorderBrush="#BBA08C" Width="25" Height="25" Margin="15,0,0,0" Click="CopyAllText_Click" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <materialDesign:PackIcon Kind="ContentCopy" Foreground="AliceBlue"/>
+                        </Button>
+                        <Button x:Name="SearchSelectedText" ToolTip="搜索选定文本（未选定则搜索全部）" Style="{DynamicResource MaterialDesignFloatingActionButton}" Background="#BBA08C" BorderBrush="#BBA08C" Width="25" Height="25" Margin="15,0,0,0" Click="SearchSelectedText_Click" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <materialDesign:PackIcon Kind="Search" Foreground="AliceBlue"/>
+                        </Button>
+                    </StackPanel>
+                    <TextBox Name="MainText" LostFocus="MainText_LostFocus" FontSize="16" HorizontalContentAlignment="Left" Grid.Row="1" Margin="8" AcceptsReturn="True" TextWrapping="Wrap"></TextBox>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                </Grid>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
+                </Border.Effect>
+            </Border>
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="TextProcessDragTransform"></TranslateTransform>
             </Grid.RenderTransform>
         </Grid>
     </Grid>

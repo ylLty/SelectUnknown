@@ -83,11 +83,7 @@ namespace SelectUnknown
             mainFrame.Navigate(GeneralPage.Instance);
         }
 
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
+       
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
             mainFrame.Navigate(AboutPage.Instance);
@@ -96,6 +92,11 @@ namespace SelectUnknown
         public void PopupMsg(string msg)
         {
             MainSnackbar.MessageQueue?.Enqueue(msg);
+        }
+
+        private void ServiceButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainFrame.Navigate(ServicePage.Instance);
         }
     }
 }
