@@ -1,7 +1,9 @@
 ﻿using Microsoft.Web.WebView2.Core;
+using SelectUnknown.Lens;
 using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,16 +27,20 @@ namespace SelectUnknown
     public partial class LensWindow : Window
     {
         string searchUri = Main.GetSEHomeUrl();
-        public LensWindow(BitmapSource scrImg, string selectedWords = "")
+        Bitmap screenImg;
+        public LensWindow(Bitmap scrImg, string selectedWords = "")
         {
             InitializeComponent();
-            ScreenImage.Source = scrImg;
+            BitmapSource bmps = LensHelper.ConvertToBitmapSource(scrImg);
+            ScreenImage.Source = bmps;
             if (!string.IsNullOrWhiteSpace(selectedWords))
             {
                 searchUri = Main.GetSESearchingUrl(selectedWords);
                 MainText.Text = selectedWords;
             }
-            Clipboard.SetImage(scrImg);
+            Clipboard.SetDataObject(bmps);
+            
+            screenImg = scrImg;
         }
        
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -77,6 +83,8 @@ namespace SelectUnknown
             this.DataContext = null;
             webView.Dispose();
             webView = null;
+            screenImg.Dispose();
+            screenImg = null;
 
             //取消订阅事件
             ScreenImage.PreviewMouseDown -= TakeColorHex;
@@ -93,6 +101,7 @@ namespace SelectUnknown
             this.Close();
             GC.Collect();
             GC.WaitForPendingFinalizers();
+            LogHelper.Log("框定即搜窗口已关闭，资源已释放");
         }
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -104,6 +113,7 @@ namespace SelectUnknown
             if (ConfigManagment.Config.UsingAndroidUserAgent)
             {
                 webView.CoreWebView2.Settings.UserAgent = Main.GetWebViewUserAgent();//设置为安卓 UA
+                LogHelper.Log("已设置 WebView2 使用安卓用户代理");
             }
         }
         private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
@@ -457,6 +467,14 @@ namespace SelectUnknown
         {
             // 防止应失去焦点而取消选择文本
             e.Handled = true;
+        }
+
+        private void SaveScreen_Click(object sender, RoutedEventArgs e)
+        {
+            string filePath = ScreencatchHelper.GetScreenshotFilePath();
+            screenImg.Save(filePath, ImageFormat.Png);
+            Main.MousePopup($"截图已保存!", 2000);
+            LogHelper.Log($"截图已保存至 {filePath}", LogLevel.Info);
         }
     }
 }

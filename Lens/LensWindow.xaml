@@ -45,6 +45,9 @@
                     <Button Name="TakeColor" Click="TakeColor_Click" ToolTip="取色工具" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="Eyedropper" Foreground="#FF292929"/>
                     </Button>
+                    <Button Name="SaveScreen" Click="SaveScreen_Click" ToolTip="保存整个屏幕" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="ContentSave" Foreground="#FF292929"/>
+                    </Button>
                     
                 </StackPanel>
                 

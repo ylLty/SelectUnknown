@@ -389,6 +389,8 @@ namespace SelectUnknown
                 case "Yandex":
                     return "https://www.yandex.com/";
                 default:
+                    MousePopup("无法识别的搜索引擎，已默认使用必应搜索引擎");
+                    LogHelper.Log("无法识别的搜索引擎，已默认使用必应搜索引擎", LogLevel.Warn);
                     return "https://cn.bing.com/";//默认必应 毕竟是一个比较折中的搜索引擎(国内可访问, 体验较好, 虽然也开始收割用户了)
             }
         }
@@ -413,6 +415,8 @@ namespace SelectUnknown
                 case "Yandex":
                     return $"https://yandex.com/search/?text={searchingText}";
                 default:
+                    MousePopup("无法识别的搜索引擎，已默认使用必应搜索引擎");
+                    LogHelper.Log("无法识别的搜索引擎，已默认使用必应搜索引擎", LogLevel.Warn);
                     return $"https://cn.bing.com/search?q={searchingText}";//默认必应 毕竟是一个比较折中的搜索引擎(国内可访问, 体验较好, 虽然也开始收割用户了)
             }
         }
@@ -421,6 +425,15 @@ namespace SelectUnknown
         {
             //Android Edge
             return "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36 EdgA/144.0.0.0";
+        }
+        public static bool IsUrl(string url)
+        {
+            // 检查字符串是否不为空
+            if (string.IsNullOrWhiteSpace(url)) return false;
+
+            // 尝试解析为URI，UriKind.Absolute确保只有包含协议(如http)的链接被认定为真
+            return Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
         #endregion
 

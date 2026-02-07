@@ -21,9 +21,8 @@ namespace SelectUnknown.Lens
         public static void Start(string selectedWords = "")
         {
             var bmp = CaptureScreen();
-            var source = ConvertToBitmapSource(bmp);
 
-            LensWindow lensWindow = new LensWindow(source, selectedWords);
+            LensWindow lensWindow = new LensWindow(bmp, selectedWords);
             lensWindow.Show();
             lensWindow.Activate();
         }
@@ -44,7 +43,7 @@ namespace SelectUnknown.Lens
             return bmp;
         }
 
-        static BitmapSource ConvertToBitmapSource(Bitmap bitmap)
+        public static BitmapSource ConvertToBitmapSource(Bitmap bitmap)
         {
             IntPtr hBitmap = bitmap.GetHbitmap();
 

@@ -57,6 +57,13 @@ namespace SelectUnknown.HotKeyMan
         {
             LogHelper.Log("框定即搜热键被按下，执行框定即搜操作", LogLevel.Info);
             string selectedWords = Main.GetSelectedText();
+            if (Main.IsUrl(selectedWords))
+            {
+                LogHelper.Log("检测到选中的文本是一个网址，直接使用浏览器打开", LogLevel.Info);
+                Main.MousePopup("检测到网址，已使用浏览器打开");
+                Main.OpenUrl(selectedWords);
+                return;
+            }
             LensHelper.Start(selectedWords);
         }
 

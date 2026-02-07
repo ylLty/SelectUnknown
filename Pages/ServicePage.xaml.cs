@@ -27,27 +27,30 @@ namespace SelectUnknown.Pages
         {
             InitializeComponent();
             SearchEngineSelect.Text = Config.SearchEngineName;
+            SearchEngineSelect.SelectedItem = Config.SearchEngineName;
             UsingAndroidUserAgentCheck.IsChecked = Config.UsingAndroidUserAgent;
         }
 
         private void SearchEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (SearchEngineSelect.SelectedItem == null) return;
             string result = SearchEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
             Config.SearchEngineName = result;
             ConfigManager.SaveConfig();
             if (result == "夸克" && Config.UsingAndroidUserAgent == true)
             {
-                Main.PopupMessageOnConfigWindow("温馨提示: 启用安卓用户代理后，\n夸克搜索引擎可能无法正常使用。");
+                Main.PopupMessageOnConfigWindow("启用安卓用户代理后，夸克\n搜索引擎可能无法正常使用。");
             }
         }
 
         private void UsingAndroidUserAgentCheck_Checked(object sender, RoutedEventArgs e)
         {
             Config.UsingAndroidUserAgent = true;
+            if (SearchEngineSelect.SelectedItem == null) return;
             string result = SearchEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
             if (result == "夸克")
             {
-                Main.PopupMessageOnConfigWindow("温馨提示: 启用安卓用户代理后，\n夸克搜索引擎可能无法正常使用。");
+                Main.PopupMessageOnConfigWindow("启用安卓用户代理后，夸克\n搜索引擎可能无法正常使用。");
             }
         }
 
