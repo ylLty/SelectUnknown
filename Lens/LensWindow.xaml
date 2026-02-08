@@ -20,6 +20,7 @@
     <Grid Name="MainGrid">
         <Image x:Name="ScreenImage" Stretch="UniformToFill"/>
         <Image x:Name="BackgroundImage" Opacity="0.0" Stretch="UniformToFill" IsHitTestVisible="False" Source="pack://siteoforigin:,,,/res/background.png"/>
+        
         <Canvas Name="SelectionCanvas" Cursor="Cross">
             <Rectangle Name="SelectionRectangle" Stroke="#7F3399FF" StrokeThickness="2" Fill="Transparent" Visibility="Hidden"/>
             <Canvas.Effect>
