@@ -317,9 +317,11 @@ namespace SelectUnknown
             });
         }
 
-        private static Point GetMousePosition()
+        private static System.Drawing.Point GetMousePosition()
         {
-            return GetCursorScreenPosition();
+            System.Drawing.Point mousePos = System.Windows.Forms.Cursor.Position;
+            return mousePos;
+            //return GetCursorScreenPosition();
         }
         [StructLayout(LayoutKind.Sequential)]
         private struct POINT
@@ -328,14 +330,14 @@ namespace SelectUnknown
             public int Y;
         }
 
-        [DllImport("user32.dll")]
-        private static extern bool GetCursorPos(out POINT lpPoint);
+        //[DllImport("user32.dll")]
+        //private static extern bool GetCursorPos(out POINT lpPoint);
 
-        public static Point GetCursorScreenPosition()
-        {
-            GetCursorPos(out var p);
-            return new Point(p.X, p.Y);
-        }
+        //public static Point GetCursorScreenPosition()
+        //{
+        //    GetCursorPos(out var p);
+        //    return new Point(p.X, p.Y);
+        //}
         #endregion
         /// <summary>
         /// 获取用户当前选择的文本

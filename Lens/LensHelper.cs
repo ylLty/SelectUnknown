@@ -21,29 +21,12 @@ namespace SelectUnknown.Lens
         /// </summary>
         public static void Start(string selectedWords = "")
         {
-            var bmp = CaptureScreen();
+            var bmp = ScreencatchHelper.CaptureScreen();
 
             LensWindow lensWindow = new LensWindow(bmp, selectedWords);
             lensWindow.Show();
             lensWindow.Activate();
         }
-        static Bitmap CaptureScreen()
-        {
-            int width = (int)SystemParameters.VirtualScreenWidth;
-            int height = (int)SystemParameters.VirtualScreenHeight;
-            int left = (int)SystemParameters.VirtualScreenLeft;
-            int top = (int)SystemParameters.VirtualScreenTop;
-
-            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            using (Graphics g = Graphics.FromImage(bmp))
-            {
-                g.CopyFromScreen(left, top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
-            }
-
-            return bmp;
-        }
-
         public static BitmapSource ConvertToBitmapSource(Bitmap bitmap)
         {
             IntPtr hBitmap = bitmap.GetHbitmap();

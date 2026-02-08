@@ -115,5 +115,13 @@ namespace SelectUnknown.Pages
                 LogHelper.Log($"截图文件夹路径无效({Config.ScreenshotFolderPath})(在配置界面触发)", LogLevel.Warn);
             }
         }
+
+        private void Reset_Click(object sender, RoutedEventArgs e)
+        {
+            if (System.Windows.MessageBox.Show("确定要重置所有配置吗？", "二次确认", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                ConfigManager.ResetConfig();
+            }
+        }
     }
 }

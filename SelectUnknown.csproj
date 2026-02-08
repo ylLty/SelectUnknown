@@ -39,6 +39,7 @@
     <PackageReference Include="GlobalHotKey" Version="1.1.0" />
     <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
+    <PackageReference Include="PaddleOCRJson.NET" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

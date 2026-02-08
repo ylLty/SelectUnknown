@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using static System.Windows.Forms.DataFormats;
+using Point = System.Drawing.Point;
 
 namespace SelectUnknown
 {
@@ -50,21 +52,26 @@ namespace SelectUnknown
             string filePath = Path.Combine(directory, $"Screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.png");
             return filePath;
         }
-        static Bitmap CaptureScreen()
+        private const PixelFormat FORMAT = PixelFormat.Format24bppRgb;
+        public static Bitmap CaptureScreen()
         {
-            int width = (int)SystemParameters.VirtualScreenWidth;
-            int height = (int)SystemParameters.VirtualScreenHeight;
-            int left = (int)SystemParameters.VirtualScreenLeft;
-            int top = (int)SystemParameters.VirtualScreenTop;
-
-            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            using (Graphics g = Graphics.FromImage(bmp))
+            Bitmap screenshot = new Bitmap(
+        Screen.PrimaryScreen.Bounds.Width,
+        Screen.PrimaryScreen.Bounds.Height,
+        FORMAT
+    );
+            using (Graphics gfx = Graphics.FromImage(screenshot))
             {
-                g.CopyFromScreen(left, top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
+                gfx.CopyFromScreen(
+                    Screen.PrimaryScreen.Bounds.X,
+                    Screen.PrimaryScreen.Bounds.Y,
+                    0,
+                    0,
+                    Screen.PrimaryScreen.Bounds.Size,
+                    CopyPixelOperation.SourceCopy
+                );
+                return screenshot;
             }
-
-            return bmp;
         }
     }
 }

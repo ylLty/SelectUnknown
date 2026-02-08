@@ -38,3 +38,19 @@ CatBox
 https://litterbox.catbox.moe/
 服务条款：https://catbox.moe/legal.php
 CatBox 图床支持，感谢 CatBox 提供免费服务
+
+----------------
+PaddleOCRJson.NET
+----------------
+https://github.com/aki-0929/PaddleOCRJson.NET
+Copyright (C) aki-0929
+Licensed under Apache License 2.0
+OCR 文字识别 .NET 封装
+
+----------------
+PaddleOCR-json
+----------------
+https://github.com/hiroi-sora/PaddleOCR-json
+Copyright (C) hiroi-sora
+Licensed under Apache License 2.0
+OCR 文字识别
