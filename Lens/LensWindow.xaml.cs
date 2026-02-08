@@ -127,6 +127,7 @@ namespace SelectUnknown
         }
         private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
+            Loading.Visibility = Visibility.Collapsed;
             if (webView != null && webView.CoreWebView2 != null)
             {
                 webView.CoreWebView2.NewWindowRequested += webView_NewWindowRequested;
@@ -136,6 +137,7 @@ namespace SelectUnknown
         Int16 navigationTimes = 0;
         private void webView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
+            Loading.Visibility = Visibility.Visible;
             navigationTimes++;
             if (isFirstNavigation)
             {
@@ -239,9 +241,12 @@ namespace SelectUnknown
         {
             LogHelper.Log("用户选择了框选工具");
             ScreenImage.Cursor = System.Windows.Input.Cursors.Cross;
-            MainGrid.MouseLeftButtonDown += StartSelectRectangle;
-            MainGrid.MouseMove += MovingSelectRectangle;
-            MainGrid.MouseLeftButtonUp += EndSelectRectangle;
+            ScreenImage.MouseLeftButtonDown += StartSelectRectangle;
+            ScreenImage.MouseMove += MovingSelectRectangle;
+            ScreenImage.MouseLeftButtonUp += EndSelectRectangle;
+            SelectionCanvas.MouseLeftButtonDown += StartSelectRectangle;
+            SelectionCanvas.MouseMove += MovingSelectRectangle;
+            SelectionCanvas.MouseLeftButtonUp += EndSelectRectangle;
         }
         private void StartSelectRectangle(object sender, MouseButtonEventArgs e)
         {
@@ -287,6 +292,7 @@ namespace SelectUnknown
         /// <returns></returns>
         public async void ImageToLens(Bitmap croppedImg)
         {
+            Loading.Visibility = Visibility.Visible;
             string imageUrl = await LitterboxUploader.SendImageToLitterboxAndGetUrl(croppedImg);
             if (string.IsNullOrEmpty(imageUrl))
             {
@@ -343,9 +349,12 @@ namespace SelectUnknown
         private void ShutdownSelectRectangleMode(bool doNotCloseRectangle = false)
         {
             ScreenImage.Cursor = System.Windows.Input.Cursors.Arrow;
-            MainGrid.MouseLeftButtonDown -= StartSelectRectangle;
-            MainGrid.MouseMove -= MovingSelectRectangle;
-            MainGrid.MouseLeftButtonUp -= EndSelectRectangle;
+            ScreenImage.MouseLeftButtonDown -= StartSelectRectangle;
+            ScreenImage.MouseMove -= MovingSelectRectangle;
+            ScreenImage.MouseLeftButtonUp -= EndSelectRectangle;
+            SelectionCanvas.MouseLeftButtonDown -= StartSelectRectangle;
+            SelectionCanvas.MouseMove -= MovingSelectRectangle;
+            SelectionCanvas.MouseLeftButtonUp -= EndSelectRectangle;
             if (doNotCloseRectangle) return;
             // 隐藏矩形
             SelectionRectangle.Visibility = Visibility.Collapsed;
@@ -359,7 +368,7 @@ namespace SelectUnknown
         private void TakeColor_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.Log("用户选择了取色工具");
-            ShutdownSelectRectangleMode(true);// 取消框选
+            ShutdownSelectRectangleMode();// 取消框选
             HideBackgroundImg(200, 0);// 隐藏背景图以便取色
             ScreenImage.Cursor = System.Windows.Input.Cursors.Pen;
             ScreenImage.PreviewMouseDown += TakeColorHex;

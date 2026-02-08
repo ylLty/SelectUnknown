@@ -95,6 +95,8 @@
                             <materialDesign:PackIcon Kind="WindowMinimize" Foreground="AliceBlue"/>
                         </Button>
                     </StackPanel>
+                    <ProgressBar x:Name="Loading" Height="5" Width="280" HorizontalAlignment="Left" Margin="38,50,0,0" VerticalAlignment="Top" IsIndeterminate="True"></ProgressBar>
+
 
                     <Border x:Name="WebView" BorderBrush="AliceBlue" Margin="15,60,15,15">
                         <wv2:WebView2 x:Name="webView" Source="https://google.com/" NavigationCompleted="webView_NavigationCompleted" NavigationStarting="webView_NavigationStarting"></wv2:WebView2>
@@ -104,9 +106,11 @@
                     <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
                 </Border.Effect>
             </Border>
+
             <Grid.RenderTransform>
                 <TranslateTransform x:Name="BrowserDragTransform" />
             </Grid.RenderTransform>
+            
         </Grid>
         <Grid GotFocus="TextProcess_GotFocus" x:Name="TextProcess" Width="350" Height="190" HorizontalAlignment="Left" Margin="25,0,0,0">
             <Border Background="#F4E5D9" CornerRadius="15">
