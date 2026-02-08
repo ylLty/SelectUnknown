@@ -74,12 +74,14 @@ namespace SelectUnknown.Lens
                             }
                             else
                             {
+                                LogManagement.LogHelper.Log("Litterbox 上传失败，状态码：" + response.StatusCode + "，返回内容：" + result, LogManagement.LogLevel.Error);
                                 // 如果还是 400，可以观察下 result 是否变了
                                 return null;
                             }
                         }
                         catch (Exception ex)
                         {
+                            LogManagement.LogHelper.Log("Litterbox 上传异常：" + ex.Message, LogManagement.LogLevel.Error);
                             return null;
                         }
                     }
