@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Clipboard = System.Windows.Forms.Clipboard;
 
 namespace SelectUnknown.Lens
 {

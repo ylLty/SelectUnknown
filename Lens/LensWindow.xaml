@@ -10,18 +10,24 @@
         AllowsTransparency="True"
         WindowState="Maximized"
         ResizeMode="NoResize"
-        Topmost="True"
+        Topmost="False"
         Background="Transparent"
         KeyDown="Window_KeyDown"
         Loaded="Window_Loaded"
         ShowInTaskbar="False"
         
         Title="Select Unknown" Height="1080" Width="1920">
-    <Grid>
+    <Grid Name="MainGrid">
         <Image x:Name="ScreenImage" Stretch="UniformToFill"/>
         <Image x:Name="BackgroundImage" Opacity="0.0" Stretch="UniformToFill" IsHitTestVisible="False" Source="pack://siteoforigin:,,,/res/background.png"/>
-
-        <Border Name="ToolBox" Background="#FFBFD9DC" Height="45" Width="1300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="12" CornerRadius="15">
+        <Canvas Name="SelectionCanvas" Cursor="Cross">
+            <Rectangle Name="SelectionRectangle" Stroke="#7F3399FF" StrokeThickness="2" Fill="Transparent" Visibility="Hidden"/>
+            <Canvas.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="#E89ABD"/>
+            </Canvas.Effect>
+        </Canvas>
+        
+        <Border GotFocus="ToolBox_GotFocus" Name="ToolBox" Background="#FFBFD9DC" Height="45" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="12" CornerRadius="15">
             <Grid Margin="15,0">
                 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0">
@@ -48,7 +54,18 @@
                     <Button Name="SaveScreen" Click="SaveScreen_Click" ToolTip="保存整个屏幕" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="ContentSave" Foreground="#FF292929"/>
                     </Button>
-                    
+
+                    <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
+                    <Button Name="HideBackground" Click="HideBackground_Click" ToolTip="隐藏彩雾 (Back)" Background="#FF31D051" BorderBrush="#FF31D051" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Name="HideBackgroundIcon" Kind="Hide" Foreground="#FF292929"/>
+                    </Button>
+                    <Button Name="Settings" Click="Settings_Click" ToolTip="设置" Background="#FF31D051" BorderBrush="#FF31D051" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="Settings" Foreground="#FF292929"/>
+                    </Button>
+                    <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
+                    <Button Name="Close" Click="Close_Click" ToolTip="关闭 (Esc)" Background="#FFDE4B4B" BorderBrush="#FFDE4B4B" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="Close" Foreground="#FF292929"/>
+                    </Button>
                 </StackPanel>
                 
             </Grid>
@@ -61,7 +78,7 @@
             
         </Border>
 
-        <Grid Name="Browser" Background="Transparent" Width="450" Height="800" HorizontalAlignment="Right" Margin="0,0,25,0">
+        <Grid GotFocus="Browser_GotFocus" Name="Browser" Background="Transparent" Width="450" Height="800" HorizontalAlignment="Right" Margin="0,0,25,0">
             <Border Background="AliceBlue" CornerRadius="20">
                 <Grid>
                     <StackPanel Height="60" VerticalAlignment="Top" Orientation="Horizontal">
@@ -78,8 +95,7 @@
                             <materialDesign:PackIcon Kind="WindowMinimize" Foreground="AliceBlue"/>
                         </Button>
                     </StackPanel>
-                    
-                    
+
                     <Border x:Name="WebView" BorderBrush="AliceBlue" Margin="15,60,15,15">
                         <wv2:WebView2 x:Name="webView" Source="https://google.com/" NavigationCompleted="webView_NavigationCompleted" NavigationStarting="webView_NavigationStarting"></wv2:WebView2>
                     </Border>
@@ -92,7 +108,7 @@
                 <TranslateTransform x:Name="BrowserDragTransform" />
             </Grid.RenderTransform>
         </Grid>
-        <Grid x:Name="TextProcess" Width="350" Height="190" HorizontalAlignment="Left" Margin="25,0,0,0">
+        <Grid GotFocus="TextProcess_GotFocus" x:Name="TextProcess" Width="350" Height="190" HorizontalAlignment="Left" Margin="25,0,0,0">
             <Border Background="#F4E5D9" CornerRadius="15">
                 <Grid>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" Margin="8">

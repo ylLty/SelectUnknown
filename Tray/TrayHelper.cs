@@ -76,10 +76,7 @@ public static class TrayHelper
 
     private static void ConfigMenuItemClick(object? sender, EventArgs e)
     {
-        var configWindow = System.Windows.Application.Current.MainWindow;
-
-        configWindow.Show();
-        configWindow.Activate();
+        Main.OpenConfigWindow();
         LogHelper.Log("用户通过托盘菜单打开了配置窗口", LogLevel.Info);
     }
 

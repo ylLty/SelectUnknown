@@ -29,6 +29,7 @@ namespace SelectUnknown.Pages
             SearchEngineSelect.Text = Config.SearchEngineName;
             SearchEngineSelect.SelectedItem = Config.SearchEngineName;
             UsingAndroidUserAgentCheck.IsChecked = Config.UsingAndroidUserAgent;
+            LensEngineSelect.Text = Config.LensEngineName;
         }
 
         private void SearchEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -57,6 +58,14 @@ namespace SelectUnknown.Pages
         private void UsingAndroidUserAgentCheck_Unchecked(object sender, RoutedEventArgs e)
         {
             Config.UsingAndroidUserAgent = false;
+        }
+
+        private void LensEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LensEngineSelect.SelectedItem == null) return;
+            string result = LensEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
+            Config.LensEngineName = result;
+            ConfigManager.SaveConfig();
         }
     }
 }

@@ -1,10 +1,14 @@
 ﻿using Microsoft.Web.WebView2.Core;
+using SelectUnknown.ConfigManagment;
 using SelectUnknown.Lens;
 using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,7 +21,9 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static System.Net.WebRequestMethods;
-using Clipboard = System.Windows.Clipboard;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
+using Clipboard = System.Windows.Forms.Clipboard;
+using Path = System.IO.Path;
 
 namespace SelectUnknown
 {
@@ -38,6 +44,7 @@ namespace SelectUnknown
                 searchUri = Main.GetSESearchingUrl(selectedWords);
                 MainText.Text = selectedWords;
             }
+
             Clipboard.SetDataObject(bmps);
             
             screenImg = scrImg;
@@ -50,14 +57,7 @@ namespace SelectUnknown
                     ShutdownWindow();
                     break;
                 case Key.Back:
-                    if (BackgroundImage.Opacity == BackgroundImgDefaultOpacity)
-                    {
-                        HideBackgroundImg(200);
-                    }
-                    else
-                    {
-                        ShowBackgroundImg(200);
-                    }
+                    HideBackground_Click(sender, e);
                     break;
                 case Key.Tab:
                     if (Browser.Visibility == Visibility.Visible)
@@ -71,20 +71,26 @@ namespace SelectUnknown
                     break;
             }
         }
+        bool closed = false;
         /// <summary>
         /// 关闭窗口并释放一定资源
         /// </summary>
         private void ShutdownWindow()
         {
+            if (closed) return;
             BackgroundImage.Source = null;
             BackgroundImage.UpdateLayout();
             ScreenImage.Source = null;
             ScreenImage.UpdateLayout();
             this.DataContext = null;
-            webView.Dispose();
-            webView = null;
+            if (webView != null && webView.CoreWebView2 != null)//没有就不用释放
+            {
+                webView.Dispose();
+                webView = null;
+            }
             screenImg.Dispose();
             screenImg = null;
+            ShutdownSelectRectangleMode();
 
             //取消订阅事件
             ScreenImage.PreviewMouseDown -= TakeColorHex;
@@ -98,7 +104,9 @@ namespace SelectUnknown
             }
             TakeColor.Click -= TakeColor_Click;
 
+            closed = true;// 不这样做会导致再被调用一次,“鞭尸”会导致软件崩溃
             this.Close();
+            MainGrid.Children.Clear();
             GC.Collect();
             GC.WaitForPendingFinalizers();
             LogHelper.Log("框定即搜窗口已关闭，资源已释放");
@@ -115,6 +123,7 @@ namespace SelectUnknown
                 webView.CoreWebView2.Settings.UserAgent = Main.GetWebViewUserAgent();//设置为安卓 UA
                 LogHelper.Log("已设置 WebView2 使用安卓用户代理");
             }
+            SelectRectangle_Click(sender, e);
         }
         private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
@@ -124,8 +133,10 @@ namespace SelectUnknown
             }
         }
         bool isFirstNavigation = true;
+        Int16 navigationTimes = 0;
         private void webView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
+            navigationTimes++;
             if (isFirstNavigation)
             {
                 webView_FirstNavigationStarting(sender, e);
@@ -134,6 +145,11 @@ namespace SelectUnknown
             if (webView != null && webView.CoreWebView2 != null)
             {
 
+            }
+            if (isLensSearching && (navigationTimes - lensTimes) / 2 > 1)//我也不知道为什么要除以2
+            {
+                currentLensUrl = "";
+                isLensSearching = false;
             }
         }
         /// <summary>
@@ -217,14 +233,133 @@ namespace SelectUnknown
             Browser.BeginAnimation(UIElement.OpacityProperty, animation);
             ToolBox.BeginAnimation(UIElement.OpacityProperty, animation);
         }
+        #region 框选工具
+        System.Windows.Point startPoint;
         private void SelectRectangle_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.Log("用户选择了框选工具");
+            ScreenImage.Cursor = System.Windows.Input.Cursors.Cross;
+            MainGrid.MouseLeftButtonDown += StartSelectRectangle;
+            MainGrid.MouseMove += MovingSelectRectangle;
+            MainGrid.MouseLeftButtonUp += EndSelectRectangle;
         }
+        private void StartSelectRectangle(object sender, MouseButtonEventArgs e)
+        {
+            startPoint = e.GetPosition(SelectionCanvas);
+            SelectionRectangle.Width = 0;
+            SelectionRectangle.Height = 0;
+            SelectionRectangle.Visibility = Visibility.Visible;
+            Canvas.SetLeft(SelectionRectangle, startPoint.X);
+            Canvas.SetTop(SelectionRectangle, startPoint.Y);
+        }
+        private void MovingSelectRectangle(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var pos = e.GetPosition(SelectionCanvas);
+                // 计算矩形位置和大小，支持反向拖拽
+                var x = Math.Min(pos.X, startPoint.X);
+                var y = Math.Min(pos.Y, startPoint.Y);
+                var w = Math.Abs(pos.X - startPoint.X);
+                var h = Math.Abs(pos.Y - startPoint.Y);
+
+                SelectionRectangle.Width = w;
+                SelectionRectangle.Height = h;
+                Canvas.SetLeft(SelectionRectangle, x);
+                Canvas.SetTop(SelectionRectangle, y);
+            }
+        }
+        /// <summary>
+        /// 判断是否正在使用 Lens 进行搜索，决定是否跳转至 currentLensUrl
+        /// </summary>
+        bool isLensSearching = false;
+        string currentLensUrl = "";
+        Int16 lensTimes = 0;
+        private async void EndSelectRectangle(object sender, MouseButtonEventArgs e)
+        {
+            Bitmap croppedImg = GetSelectedImg();
+            ImageToLens(croppedImg);
+        }
+        /// <summary>
+        /// 分析图片
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <returns></returns>
+        public async void ImageToLens(Bitmap croppedImg)
+        {
+            string imageUrl = await LitterboxUploader.SendImageToLitterboxAndGetUrl(croppedImg);
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                Main.MousePopup("图片上传失败，请重试");
+                LogHelper.Log("图片上传至 Litterbox 失败，无法使用分析", LogLevel.Error);
+            }
+            else
+            {
+                if (webView == null || webView.CoreWebView2 == null) return;
+                currentLensUrl = Main.GetLensEngineUrl(imageUrl);
+                webView.CoreWebView2.Navigate(currentLensUrl);
+                isLensSearching = true;
+                lensTimes = navigationTimes;
+                LogHelper.Log($"用户完成了一次框选并上传至 {Config.LensEngineName} 进行分析");
+            }
+            Clipboard.SetImage(croppedImg);
+        }
+        private Bitmap GetSelectedImg()
+        {
+            var source = ScreenImage.Source as BitmapSource;
+            if (source == null)
+            {
+                LogHelper.Log($"裁剪图片时出错: source为空", LogLevel.Error);
+                Main.MousePopup("裁剪图片时出错，请重试");
+                return screenImg;
+            }
+
+            // 1. 计算缩放比例 (假设图片是 Uniform 填充)
+            double scaleX = source.PixelWidth / ScreenImage.ActualWidth;
+            double scaleY = source.PixelHeight / ScreenImage.ActualHeight;
+
+            // 2. 获取矩形在控件上的位置
+            double rectX = Canvas.GetLeft(SelectionRectangle);
+            double rectY = Canvas.GetTop(SelectionRectangle);
+
+            // 3. 映射到原始像素坐标
+            Int32Rect sourceRect = new Int32Rect(
+                (int)(rectX * scaleX), (int)(rectY * scaleY),
+                (int)(SelectionRectangle.Width * scaleX), (int)(SelectionRectangle.Height * scaleY));
+
+            // 4. 使用 CroppedBitmap 裁剪提取
+            try
+            {
+                var croppedBitmap = new CroppedBitmap(source, sourceRect);
+                return Main.CroppedBitmapToBmp(croppedBitmap);
+            }
+            catch (Exception ex) 
+            { 
+                LogHelper.Log($"裁剪图片时出错: {ex.Message}", LogLevel.Error);
+                Main.MousePopup("裁剪图片时出错，请重试");
+                return screenImg;
+            }
+        }
+        private void ShutdownSelectRectangleMode(bool doNotCloseRectangle = false)
+        {
+            ScreenImage.Cursor = System.Windows.Input.Cursors.Arrow;
+            MainGrid.MouseLeftButtonDown -= StartSelectRectangle;
+            MainGrid.MouseMove -= MovingSelectRectangle;
+            MainGrid.MouseLeftButtonUp -= EndSelectRectangle;
+            if (doNotCloseRectangle) return;
+            // 隐藏矩形
+            SelectionRectangle.Visibility = Visibility.Collapsed;
+
+            // 将尺寸归零，防止逻辑干扰
+            SelectionRectangle.Width = 0;
+            SelectionRectangle.Height = 0;
+        }
+        #endregion
         #region 取色工具
         private void TakeColor_Click(object sender, RoutedEventArgs e)
         {
             LogHelper.Log("用户选择了取色工具");
+            ShutdownSelectRectangleMode(true);// 取消框选
             HideBackgroundImg(200, 0);// 隐藏背景图以便取色
             ScreenImage.Cursor = System.Windows.Input.Cursors.Pen;
             ScreenImage.PreviewMouseDown += TakeColorHex;
@@ -315,6 +450,7 @@ namespace SelectUnknown
             return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         }
         #endregion
+        
         #region 工具栏拖动
         private System.Windows.Point _lastMouseDown;
         private bool _isDragging;
@@ -350,10 +486,23 @@ namespace SelectUnknown
         #endregion
         private void ShowInBrowser_Click(object sender, RoutedEventArgs e)
         {
-            Main.OpenUrl(AddressBar.Text);
+            string url;
+            if (isLensSearching && !string.IsNullOrEmpty(currentLensUrl))
+            {
+                url = currentLensUrl;
+            }
+            else
+            {
+                url = AddressBar.Text;
+            }
+            Main.OpenUrl(url);
             ShutdownWindow();
         }
-
+        protected override void OnClosed(EventArgs e)
+        {
+            ShutdownWindow();
+            base.OnClosed(e);
+        }
         private void Minisize_Click(object sender, RoutedEventArgs e)
         {
             Browser.Visibility = Visibility.Collapsed;
@@ -476,5 +625,47 @@ namespace SelectUnknown
             Main.MousePopup($"截图已保存!", 2000);
             LogHelper.Log($"截图已保存至 {filePath}", LogLevel.Info);
         }
+
+        private void HideBackground_Click(object sender, RoutedEventArgs e)
+        {
+            if (BackgroundImage.Opacity == BackgroundImgDefaultOpacity)
+            {
+                HideBackgroundImg(200);
+                HideBackgroundIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Show;
+            }
+            else
+            {
+                ShowBackgroundImg(200);
+                HideBackgroundIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Hide;
+            }
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            ShutdownWindow();
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            ShutdownWindow();
+            Main.OpenConfigWindow();
+            LogHelper.Log("用户从框定即搜窗口打开了设置窗口");
+        }
+        #region 控件获取焦点时取消框选
+        private void ToolBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ShutdownSelectRectangleMode(true);//免得在选中其他面板时还在框选 同时又不要取消框选
+        }
+
+        private void Browser_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ShutdownSelectRectangleMode(true);//免得在选中其他面板时还在框选 同时又不要取消框选
+        }
+
+        private void TextProcess_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ShutdownSelectRectangleMode(true);//免得在选中其他面板时还在框选 同时又不要取消框选
+        }
+        #endregion
     }
 }

@@ -18,7 +18,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Clipboard = System.Windows.Forms.Clipboard;
 using static System.Net.WebRequestMethods;
 using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
@@ -420,7 +422,20 @@ namespace SelectUnknown
                     return $"https://cn.bing.com/search?q={searchingText}";//默认必应 毕竟是一个比较折中的搜索引擎(国内可访问, 体验较好, 虽然也开始收割用户了)
             }
         }
-
+        public static string GetLensEngineUrl(string imageUrl)
+        {
+            switch (Config.LensEngineName)
+            {
+                case "Yandex":
+                    return $"https://yandex.com/images/search?rpt=imageview&url={imageUrl}";
+                case "Google":
+                    return $"https://lens.google.com/uploadbyurl?url={imageUrl}";
+                default:
+                    MousePopup("无法识别的以图搜图引擎，已默认使用 Yandex 以图搜图引擎");
+                    LogHelper.Log("无法识别的以图搜图引擎，已默认使用 Yandex 以图搜图引擎", LogLevel.Warn);
+                    return $"https://yandex.com/images/search?rpt=imageview&url={imageUrl}";//默认 Yandex
+            }
+        }
         internal static string GetWebViewUserAgent()// 现在只给了安卓 UA 自定义选项, 以后可能会加更多选项, 所以先留着这个方法占位
         {
             //Android Edge
@@ -435,6 +450,28 @@ namespace SelectUnknown
             return Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult)
                 && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
+        public static Bitmap CroppedBitmapToBmp(CroppedBitmap croppedBitmap)
+        {
+            if (croppedBitmap == null) return null;
+
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                // 使用 PNG 编码器保留透明度（如果需要）
+                BitmapEncoder enc = new PngBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(croppedBitmap));
+                enc.Save(outStream);
+
+                // 从流中构造新的 Bitmap 对象
+                return new Bitmap(outStream);
+            }
+        }
+        public static void OpenConfigWindow()
+        {
+            var configWindow = System.Windows.Application.Current.MainWindow;
+            configWindow.Show();
+            configWindow.Activate();
+        }
+        
         #endregion
 
         #region 程序启动相关

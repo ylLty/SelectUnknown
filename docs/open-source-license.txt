@@ -1,11 +1,12 @@
 本项目自身使用 GPL-3.0 license 许可证，部分代码由 ChatGPT, DeepSeek, Copilot 生成。
-以下为使用的第三方开源库及其许可证，向这些开源库的开发者致以敬意！
+以下为使用的第三方开源库（或服务）及其许可证（或服务条款），向这些开源库的开发者致以敬意！
 ----------------
 .NET
 ----------------
 https://github.com/microsoft/dotnet
 Copyright (c) 2019 Microsoft
 Licensed under The MIT License (MIT)
+软件基本框架
 
 ----------------
 GlobalHotKey
@@ -13,6 +14,7 @@ GlobalHotKey
 https://github.com/kyrylomyr/GlobalHotKey
 Copyright (C) Kirill Miroshnichenko
 Licensed under GPL-3.0 license
+热键支持
 
 ----------------
 MaterialDesignThemes
@@ -20,6 +22,7 @@ MaterialDesignThemes
 https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit
 Copyright (c) James Willock,  Mulholland Software and Contributors
 Licensed under The MIT License (MIT)
+Material Design 风格 UI 组件
 
 ----------------
 Microsoft.Web.WebView2
@@ -27,3 +30,11 @@ Microsoft.Web.WebView2
 https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.3719.77
 Copyright (C) Microsoft Corporation. All rights reserved.
 License : https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.3719.77/license
+WebView2 控件
+
+----------------
+CatBox
+----------------
+https://litterbox.catbox.moe/
+服务条款：https://catbox.moe/legal.php
+CatBox 图床支持，感谢 CatBox 提供免费服务
