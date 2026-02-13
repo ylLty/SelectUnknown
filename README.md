@@ -4,7 +4,7 @@
 
 ![icon](https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/res/load-window.png)
 # Select Unknown - 框索未知
-一个集成了划词搜索、翻译、视觉搜索、截图、文字识别、取色的 Windows 版 “圈定即搜”
+一个集成了划词搜索、翻译、视觉搜索、截图、文字识别、扫码、取色的 Windows 版 “圈定即搜”
 
 </div>
 <div align="center">
