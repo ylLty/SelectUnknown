@@ -8,12 +8,11 @@
 
 
 </div>
-<div align="center">
-
 
 >[!TIP]
 >项目仍在开发中，预计发布时间 2 月 23 日。
 
+<div align="center">
 
 # 目录
 </div>
