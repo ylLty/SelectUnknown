@@ -2,7 +2,7 @@
 
 简体中文 | English 
 
-![icon](https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/res/load-window.png)
+![icon](https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/docs/load-window.webp)
 # Select Unknown - 框索未知
 一个集成了[视觉搜索](#visualSearch)、[划词搜索](#textSearch)、[文字识别](#OCR)、[翻译](#translate)、[扫码](#qrcodeScan)、[截图](#screenshot)、[取色](#takeColour)的 Windows 版 “圈定即搜”
 
@@ -18,8 +18,8 @@
 </div>
 
 - [特性一览](#特性一览)
+- [软件截图](#软件截图)
 - [快速开始](#快速开始)
-- [功能详解](#功能详解)
 - [生成指南](#生成指南)
 - [其他说明](#其他说明)
 - [赞助开发](#赞助开发)
@@ -46,12 +46,12 @@
 
 <div align="center">
 
-# 快速开始
+# 软件截图
 </div>
 
 <div align="center">
 
-# 功能详解
+# 快速开始
 </div>
 <div align="center">
 
@@ -61,6 +61,13 @@
 
 # 其他说明
 </div>
+
+>[!WARNING]
+>**若屏幕正在显示隐私、敏感或机密等信息时，请勿使用框定即搜功能**
+
+- 本项目使用 [GPL 3.0 开源许可证](https://github.com/ylLty/SelectUnknown/blob/master/LICENSE.txt)。[点此查看开发源代码许可](https://github.com/ylLty/SelectUnknown/blob/master/docs/open-source-license.txt)。
+- 目前仅支持 Windows 10/11 系统使用，Linux 系统暂不支持。未来可能会用 Electron 重写此项目 ~~（画饼中）~~
+
 <div align="center">
 
 # 赞助开发
