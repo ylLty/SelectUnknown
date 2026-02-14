@@ -65,7 +65,7 @@
 >[!WARNING]
 >**若屏幕正在显示隐私、敏感或机密等信息时，请勿使用框定即搜功能**
 
-- 本项目使用 [GPL 3.0 开源许可证](https://github.com/ylLty/SelectUnknown/blob/master/LICENSE.txt)。[点此查看开发源代码许可](https://github.com/ylLty/SelectUnknown/blob/master/docs/open-source-license.txt)。
+- 本项目使用 [GPL-3.0 开源许可证](https://github.com/ylLty/SelectUnknown/blob/master/LICENSE.txt)。[点此查看开放源代码许可](https://github.com/ylLty/SelectUnknown/blob/master/docs/open-source-license.txt)。
 - 目前仅支持 Windows 10/11 系统使用，Linux 系统暂不支持。未来可能会用 Electron 重写此项目 ~~（画饼中）~~
 
 <div align="center">
