@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,10 +21,10 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Clipboard = System.Windows.Forms.Clipboard;
 using static System.Net.WebRequestMethods;
 using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
+using Clipboard = System.Windows.Forms.Clipboard;
 using Color = System.Windows.Media.Color;
 using File = System.IO.File;
 using MessageBox = System.Windows.Forms.MessageBox;
@@ -404,6 +405,7 @@ namespace SelectUnknown
         /// <returns></returns>
         public static string GetSESearchingUrl(string searchingText)
         {
+            searchingText = System.Net.WebUtility.UrlEncode(searchingText);// URL 编码，确保特殊字符不会破坏链接结构
             switch (Config.SearchEngineName)
             {//{searchingText} 直接放浏览器里面搜索这个就行了
                 case "Google":
@@ -497,6 +499,8 @@ namespace SelectUnknown
             LogHelper.InitExpectionHandler();
             LogHelper.Log("异常处理程序初始化成功!");
 
+            ShowSessionInfo();
+
             // 防止软件重复启动
             bool createdNew;
             _mutex = new Mutex(true, "SelectUnknown_SingleInstance", out createdNew);
@@ -528,6 +532,39 @@ namespace SelectUnknown
             LogHelper.Log("托盘初始化成功!");
             HotKeyHelper.InitHotKey();
             LogHelper.Log("热键初始化成功!");
+        }
+        private static void ShowSessionInfo()
+        {
+            LogHelper.Log("=== 程序运行信息 ===");
+
+            // 1. 程序名称 & 版本
+            var assembly = Assembly.GetExecutingAssembly();
+            var name = assembly.GetName().Name;
+            var version = assembly.GetName().Version?.ToString();
+            LogHelper.Log($"程序名称: {name}");
+            LogHelper.Log($"程序版本: {version}");
+
+            // 2. 运行路径 (程序文件所在目录)
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            LogHelper.Log($"运行路径: {baseDirectory}");
+
+            // 3. 日志路径 
+            string logPath = LogHelper.GetLogPath();
+            LogHelper.Log($"日志路径: {logPath}");
+
+            // 4. 系统版本
+            LogHelper.Log($"系统版本: {Environment.OSVersion} ({(Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")})");
+
+            // 5. 是否以管理员权限运行
+            bool isAdmin = false;
+            using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+            {
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            LogHelper.Log($"管理员权限: {(isAdmin ? "是" : "否")}");
+
+            LogHelper.Log("============================");
         }
         /// <summary>
         /// 检验必要的资源文件是否存在

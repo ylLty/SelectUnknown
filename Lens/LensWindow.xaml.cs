@@ -296,7 +296,8 @@ namespace SelectUnknown
             string imageUrl = await LitterboxUploader.SendImageToLitterboxAndGetUrl(croppedImg);
             if (string.IsNullOrEmpty(imageUrl))
             {
-                Main.MousePopup("图片上传失败，请重试");
+                Main.MousePopup("图片上传失败，请检测网络，然后重试");
+                Loading.Visibility = Visibility.Collapsed;
                 LogHelper.Log("图片上传至 Litterbox 失败，无法使用分析", LogLevel.Error);
             }
             else
