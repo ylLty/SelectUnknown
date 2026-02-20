@@ -3,7 +3,7 @@ REM prebuild.bat - 简化写死版本
 REM 假设本批处理和项目文件在同一目录
 
 set "RES_SOURCE=%~dp0res"
-set "RES_TARGET=%~dp0bin\Debug\net8.0-windows\res"
+set "RES_TARGET=%~dp0bin\Debug\net8.0-windows10.0.17763.0\res"
 
 echo 源目录: %RES_SOURCE%
 echo 目标目录: %RES_TARGET%

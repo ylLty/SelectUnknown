@@ -10,7 +10,7 @@
         AllowsTransparency="True"
         WindowState="Maximized"
         ResizeMode="NoResize"
-        Topmost="False"
+        Topmost="True"
         Background="Transparent"
         KeyDown="Window_KeyDown"
         Loaded="Window_Loaded"
@@ -134,6 +134,7 @@
                         </Button>
                     </StackPanel>
                     <TextBox Name="MainText" LostFocus="MainText_LostFocus" FontSize="16" HorizontalContentAlignment="Left" Grid.Row="1" Margin="8" AcceptsReturn="True" TextWrapping="Wrap"></TextBox>
+                    <ProgressBar x:Name="TextProcessLoading" Height="4" Width="280" HorizontalAlignment="Left" Margin="38,41,0,0" VerticalAlignment="Top" Background="#FFE6C7B0" BorderBrush="#FFE6C7B0" Foreground="#FFBBA08C" IsIndeterminate="True" Visibility="Hidden"></ProgressBar>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="45"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>

@@ -283,7 +283,35 @@ namespace SelectUnknown
         private async void EndSelectRectangle(object sender, MouseButtonEventArgs e)
         {
             Bitmap croppedImg = GetSelectedImg();
+            if (croppedImg == null) return;
             ImageToLens(croppedImg);
+            if (croppedImg.Height >= 500 && croppedImg.Width >= 500)
+            {
+                Main.MousePopup("区域过大，无法识别");
+                return;
+            }
+            string croppedTxt;
+            TextProcessLoading.Visibility = Visibility.Visible;
+            try
+            {
+                croppedTxt = await OCRHelper.RecognizeAsync(croppedImg);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log($"文字识别时出错: {ex.Message}", LogLevel.Error);
+                Main.MousePopup("文字识别出错，请重试");
+                return;
+            }
+            TextProcessLoading.Visibility = Visibility.Hidden;
+
+            if (!string.IsNullOrEmpty(croppedTxt))
+            {
+                MainText.Text = croppedTxt;
+            }
+            else
+            {
+                Main.MousePopup("文字识别失败");
+            }
         }
         /// <summary>
         /// 分析图片
