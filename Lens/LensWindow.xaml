@@ -18,17 +18,17 @@
         
         Title="Select Unknown" Height="1080" Width="1920">
     <Grid Name="MainGrid">
-        <Image x:Name="ScreenImage" Stretch="UniformToFill"/>
+        <Image x:Name="ScreenImage" Stretch="UniformToFill" MouseRightButtonUp="ScreenImage_MouseRightButtonUp"/>
         <Image x:Name="BackgroundImage" Opacity="0.0" Stretch="UniformToFill" IsHitTestVisible="False" Source="pack://siteoforigin:,,,/res/background.png"/>
         
-        <Canvas Name="SelectionCanvas" Cursor="Cross">
+        <Canvas Name="SelectionCanvas" Cursor="Cross" MouseRightButtonUp="SelectionCanvas_MouseRightButtonUp">
             <Rectangle Name="SelectionRectangle" Stroke="#7F3399FF" StrokeThickness="2" Fill="Transparent" Visibility="Hidden"/>
             <Canvas.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="#E89ABD"/>
             </Canvas.Effect>
         </Canvas>
         
-        <Border GotFocus="ToolBox_GotFocus" Name="ToolBox" Background="#FFBFD9DC" Height="45" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="12" CornerRadius="15">
+        <Border Name="ToolBox" Background="#FFBFD9DC" Height="45" Width="520" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="12" CornerRadius="15">
             <Grid Margin="15,0">
                 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0">
@@ -45,6 +45,25 @@
                     </Button>
                     
                     <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
+                    <!--模式-->
+
+                    <Button Name="AutoSele" Click="AutoSele_Click" Foreground="#FF292929" ToolTip="自动模式" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="0,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="RefreshAuto" Cursor=""/>
+                    </Button>
+                    <Button Name="TextOnly" Click="TextOnly_Click" Foreground="#FF292929" ToolTip="仅搜索框中文字" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25" Cursor="Hand">
+                        <materialDesign:PackIcon Kind="TextSearchVariant"/>
+                    </Button>
+                    <Button Name="ImgOnly" Click="ImgOnly_Click" Foreground="#FF292929" ToolTip="仅搜索框中图片" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="ImageSearch"/>
+                    </Button>
+                    <Button Name="TranslateOnly" Click="TranslateOnly_Click" Foreground="#FF292929" ToolTip="仅翻译" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="Translate"/>
+                    </Button>
+                    <Button Name="OcrOnly" Click="OcrOnly_Click" Foreground="#FF292929" ToolTip="仅识别框中文字" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="AlphaTBoxOutline"/>
+                    </Button>
+                    
+                    <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
                     
                     <!--截图工具-->
                     
@@ -52,8 +71,11 @@
                     <Button Name="TakeColor" Click="TakeColor_Click" ToolTip="取色工具" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="Eyedropper" Foreground="#FF292929"/>
                     </Button>
-                    <Button Name="SaveScreen" Click="SaveScreen_Click" ToolTip="保存整个屏幕" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                    <Button Name="SaveImg" Click="SaveImg_Click" ToolTip="保存框中图片" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="ContentSave" Foreground="#FF292929"/>
+                    </Button>
+                    <Button Name="SaveScreen" Click="SaveScreen_Click" ToolTip="保存整个屏幕" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                        <materialDesign:PackIcon Kind="ContentSaveAll" Foreground="#FF292929"/>
                     </Button>
 
                     <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
@@ -79,7 +101,7 @@
             
         </Border>
 
-        <Grid GotFocus="Browser_GotFocus" Name="Browser" Background="Transparent" Width="450" Height="800" HorizontalAlignment="Right" Margin="0,0,25,0">
+        <Grid Name="Browser" Background="Transparent" Width="450" Height="800" HorizontalAlignment="Right" Margin="0,0,25,0">
             <Border Background="AliceBlue" CornerRadius="20">
                 <Grid>
                     <StackPanel Height="60" VerticalAlignment="Top" Orientation="Horizontal">
@@ -113,7 +135,7 @@
             </Grid.RenderTransform>
             
         </Grid>
-        <Grid GotFocus="TextProcess_GotFocus" x:Name="TextProcess" Width="350" Height="190" HorizontalAlignment="Left" Margin="25,0,0,0">
+        <Grid x:Name="TextProcess" Width="350" Height="190" HorizontalAlignment="Left" Margin="25,0,0,0">
             <Border Background="#F4E5D9" CornerRadius="15">
                 <Grid>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" Margin="8">

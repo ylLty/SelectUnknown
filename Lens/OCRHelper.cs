@@ -21,9 +21,11 @@ namespace SelectUnknown.Lens
     {
         public static async Task<string> RecognizeAsync(Bitmap bitmap)
         {
-            bitmap = OptimizeBitmapForOcr(bitmap);
-            Clipboard.SetImage(bitmap);
-            string tmpPath = Path.Combine(Path.GetTempPath(), $"ocr_temp_{Guid.NewGuid()}.png");
+            bitmap = await OptimizeBitmapForOcr(bitmap);
+            //Clipboard.SetImage(bitmap);
+            string tmpFolderPath = Path.Combine(Path.GetTempPath(), "SelectUnknown", "tmp");
+            Directory.CreateDirectory(tmpFolderPath);
+            string tmpPath = Path.Combine(tmpFolderPath, $"ocr_temp_{Guid.NewGuid()}.png");
             bitmap.Save(tmpPath, System.Drawing.Imaging.ImageFormat.Png);
             
             string txt = await RecognizeTextByWinSysOcrAsync(tmpPath);
@@ -33,7 +35,7 @@ namespace SelectUnknown.Lens
             {
                 try
                 {
-                    File.Delete(tmpPath);
+                    //File.Delete(tmpPath);
                 }
                 catch { /* 忽略删除失败 */ }
             }
@@ -81,25 +83,29 @@ namespace SelectUnknown.Lens
         /// <summary>
         /// OCR 前 Bitmap 预处理总入口（小尺寸自动放大）
         /// </summary>
-        public static Bitmap OptimizeBitmapForOcr(Bitmap src)
+        public static async Task<Bitmap> OptimizeBitmapForOcr(Bitmap src)
         {
             if (src == null)
                 throw new ArgumentNullException(nameof(src));
             Bitmap bmp = ToGrayscaleBitmap(src);// 灰度化
-            Clipboard.SetImage(bmp);
+            //Clipboard.SetImage(bmp);
             bool invert = ShouldInvert(bmp); // 自动判断是否需要反色
 
             bmp = ResizeInterpolation(bmp, 2.7f);// 放大
-            Clipboard.SetImage(bmp);
+            //Clipboard.SetImage(bmp);
 
             bmp = Blur(bmp, 1);// 轻微模糊，减少噪点
-            Clipboard.SetImage(bmp);
+            //Clipboard.SetImage(bmp);
+            bmp.Save(Path.Combine(Path.GetTempPath(), "blur.png"));
 
-            bmp = BinarizeBitmap(bmp, 25, false);// 二值化
-            Clipboard.SetImage(bmp);
+            bmp = await BinarizeBitmap(bmp, 140);// 二值化
+            //Clipboard.SetImage(bmp);
 
-            bmp = PadBitmapToMinSize(bmp, MinOcrSize);// 填充到最小尺寸
-            Clipboard.SetImage(bmp);
+            if (invert)
+                bmp = InvertBitmap(bmp);// 反转颜色
+
+            bmp = PadBitmapToMinSize(bmp, 128);// 填充到最小尺寸
+            //Clipboard.SetImage(bmp);
 
             //bmp = Dilation(bmp, DilationStrength);// 膨胀
             //Clipboard.SetImage(bmp);
@@ -142,7 +148,7 @@ namespace SelectUnknown.Lens
 
             using (Graphics g = Graphics.FromImage(paddedBitmap))
             {
-                // 将背景涂白（根据需求，也可以改为透明 Color.Transparent）
+                // 将背景涂色
                 g.Clear(ColorTranslator.FromHtml("#FFFFFF"));
 
                 // 将原图绘制(居中)，右侧和下方会自动留下空白
@@ -169,145 +175,116 @@ namespace SelectUnknown.Lens
 
             return bmp;
         }
-        private static Bitmap Blur(Bitmap srcBmp, int radius)
+        private static Bitmap Blur(Bitmap sourceBitmap, int radius)
         {
-            if (radius <= 0) return (Bitmap)srcBmp.Clone();
+            if (radius <= 0) return (Bitmap)sourceBitmap.Clone();
 
-            int width = srcBmp.Width;
-            int height = srcBmp.Height;
-            PixelFormat format = srcBmp.PixelFormat;
+            int width = sourceBitmap.Width;
+            int height = sourceBitmap.Height;
 
-            BitmapData data = srcBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
-            int stride = data.Stride;
-            int bytesPerPixel = Image.GetPixelFormatSize(format) / 8;
-            int totalBytes = stride * height;
+            // 1. 锁定内存，准备字节数组
+            BitmapData srcData = sourceBitmap.LockBits(new Rectangle(0, 0, width, height),
+                                                      ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            int bytes = srcData.Stride * height;
+            byte[] srcBuffer = new byte[bytes];
+            byte[] dstBuffer = new byte[bytes];
+            Marshal.Copy(srcData.Scan0, srcBuffer, 0, bytes);
+            sourceBitmap.UnlockBits(srcData);
 
-            byte[] srcPixels = new byte[totalBytes];
-            byte[] dstPixels = new byte[totalBytes];
-            Marshal.Copy(data.Scan0, srcPixels, 0, totalBytes);
-            srcBmp.UnlockBits(data);
-
-            // 遍历像素进行区域求和取平均
+            // 2. 核心算法：带边缘钳位的均值模糊
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    int rSum = 0, gSum = 0, bSum = 0, count = 0;
-
-                    for (int ky = -radius; ky <= radius; ky++)
+                    // 如果是在最边缘像素，完全不处理，保留原色
+                    if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
                     {
-                        for (int kx = -radius; kx <= radius; kx++)
-                        {
-                            int tx = x + kx;
-                            int ty = y + ky;
-
-                            if (tx >= 0 && tx < width && ty >= 0 && ty < height)
-                            {
-                                int idx = ty * stride + tx * bytesPerPixel;
-                                bSum += srcPixels[idx];
-                                gSum += srcPixels[idx + 1];
-                                rSum += srcPixels[idx + 2];
-                                count++;
-                            }
-                        }
-                    }
-
-                    int currentIdx = y * stride + x * bytesPerPixel;
-                    dstPixels[currentIdx] = (byte)(bSum / count);
-                    dstPixels[currentIdx + 1] = (byte)(gSum / count);
-                    dstPixels[currentIdx + 2] = (byte)(rSum / count);
-                    if (bytesPerPixel == 4) dstPixels[currentIdx + 3] = 255;
-                }
-            }
-
-            Bitmap resBmp = new Bitmap(width, height, format);
-            BitmapData resData = resBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, format);
-            Marshal.Copy(dstPixels, 0, resData.Scan0, totalBytes);
-            resBmp.UnlockBits(resData);
-            return resBmp;
-        }
-        /// <summary>
-        /// 自适应二值化 (非 unsafe 版)
-        /// </summary>
-        /// <param name="srcBmp">灰度图</param>
-        /// <param name="threshold">对应自适应中的偏移量 C，建议传入 10-20</param>
-        /// <param name="shouldInvert">是否反色</param>
-        private static Bitmap BinarizeBitmap(Bitmap srcBmp, int threshold, bool shouldInvert)
-        {
-            int width = srcBmp.Width;
-            int height = srcBmp.Height;
-            PixelFormat format = srcBmp.PixelFormat;
-
-            BitmapData data = srcBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
-            int stride = data.Stride;
-            int bytesPerPixel = Image.GetPixelFormatSize(format) / 8;
-            byte[] srcPixels = new byte[stride * height];
-            byte[] dstPixels = new byte[stride * height];
-            Marshal.Copy(data.Scan0, srcPixels, 0, srcPixels.Length);
-            srcBmp.UnlockBits(data);
-
-            // 针对 3.1x 放大，窗口必须足够大才能“跳出”边框的干扰
-            int blockSize = 71;
-            int radius = blockSize / 2;
-            int C = threshold;
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    // 边缘保护：距离边界太近的像素直接判为背景 (解决外边框问题)
-                    if (x < 5 || x > width - 5 || y < 5 || y > height - 5)
-                    {
-                        SetPixelWhite(dstPixels, y * stride + x * bytesPerPixel, bytesPerPixel);
+                        CopyPixel(srcBuffer, dstBuffer, x, y, srcData.Stride);
                         continue;
                     }
 
-                    long sum = 0;
+                    long r = 0, g = 0, b = 0, a = 0;
                     int count = 0;
+
                     for (int ky = -radius; ky <= radius; ky++)
                     {
-                        int ty = y + ky;
-                        if (ty < 0 || ty >= height) continue;
+                        // 像素钳位 (Clamping)：采样超出边界时，取边界像素值
+                        int py = Math.Max(0, Math.Min(height - 1, y + ky));
+
                         for (int kx = -radius; kx <= radius; kx++)
                         {
-                            int tx = x + kx;
-                            if (tx >= 0 && tx < width)
-                            {
-                                sum += srcPixels[ty * stride + tx * bytesPerPixel];
-                                count++;
-                            }
+                            int px = Math.Max(0, Math.Min(width - 1, x + kx));
+
+                            int offset = (py * srcData.Stride) + (px * 4);
+                            b += srcBuffer[offset];
+                            g += srcBuffer[offset + 1];
+                            r += srcBuffer[offset + 2];
+                            a += srcBuffer[offset + 3];
+                            count++;
                         }
                     }
 
-                    int avg = (int)(sum / count);
-                    int idx = y * stride + x * bytesPerPixel;
-                    byte current = srcPixels[idx];
-
-                    bool isText = false;
-                    if (avg < 110) // 按钮内
-                        isText = current > (avg + C + 5); // 增加额外阈值，防止把边框边缘误判
-                    else // 背景区
-                        isText = current < (avg - C);
-
-                    byte finalVal = isText ? (byte)0 : (byte)255;
-                    if (shouldInvert) finalVal = (byte)(255 - finalVal);
-
-                    dstPixels[idx] = dstPixels[idx + 1] = dstPixels[idx + 2] = finalVal;
-                    if (bytesPerPixel == 4) dstPixels[idx + 3] = 255;
+                    // 计算均值并写回
+                    int destOffset = (y * srcData.Stride) + (x * 4);
+                    dstBuffer[destOffset] = (byte)(b / count);
+                    dstBuffer[destOffset + 1] = (byte)(g / count);
+                    dstBuffer[destOffset + 2] = (byte)(r / count);
+                    dstBuffer[destOffset + 3] = (byte)(a / count);
                 }
             }
 
-            Bitmap resBmp = new Bitmap(width, height, format);
-            BitmapData resData = resBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, format);
-            Marshal.Copy(dstPixels, 0, resData.Scan0, dstPixels.Length);
-            resBmp.UnlockBits(resData);
-            return resBmp;
+            // 3. 将处理好的字节存回 Bitmap
+            Bitmap resultBitmap = new Bitmap(width, height);
+            BitmapData dstData = resultBitmap.LockBits(new Rectangle(0, 0, width, height),
+                                                      ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            Marshal.Copy(dstBuffer, 0, dstData.Scan0, bytes);
+            resultBitmap.UnlockBits(dstData);
+
+            return resultBitmap;
         }
 
-        private static void SetPixelWhite(byte[] data, int index, int bpp)
+        private static void CopyPixel(byte[] src, byte[] dst, int x, int y, int stride)
         {
-            data[index] = data[index + 1] = data[index + 2] = 255;
-            if (bpp == 4) data[index + 3] = 255;
+            int offset = (y * stride) + (x * 4);
+            dst[offset] = src[offset];
+            dst[offset + 1] = src[offset + 1];
+            dst[offset + 2] = src[offset + 2];
+            dst[offset + 3] = src[offset + 3];
+        }
+        /// <summary>
+        /// 二值化 (非 unsafe 版)
+        /// </summary>
+        private static async Task<Bitmap> BinarizeBitmap(Bitmap original, byte threshold)
+        {
+            Bitmap newBmp = new Bitmap(original.Width, original.Height);
+            for (int y = 0; y < original.Height; y++)
+            {
+                for (int x = 0; x < original.Width; x++)
+                {
+                    Color c = original.GetPixel(x, y);
+                    // 计算灰度值
+                    int gray = (int)(c.R * 0.3 + c.G * 0.59 + c.B * 0.11);
+                    // 根据阈值设为黑或白
+                    newBmp.SetPixel(x, y, gray >= threshold ? Color.White : Color.Black);
+                }
+            }
+            return newBmp;
+        }
+
+        private static Bitmap InvertBitmap(Bitmap source)
+        {
+            Bitmap result = new Bitmap(source.Width, source.Height);
+            for (int y = 0; y < source.Height; y++)
+            {
+                for (int x = 0; x < source.Width; x++)
+                {
+                    Color c = source.GetPixel(x, y);
+                    // 反色逻辑：255 减去当前通道值，保持 Alpha 通道不变
+                    Color inverted = Color.FromArgb(c.A, 255 - c.R, 255 - c.G, 255 - c.B);
+                    result.SetPixel(x, y, inverted);
+                }
+            }
+            return result;
         }
         private static bool ShouldInvert(Bitmap src)
         {

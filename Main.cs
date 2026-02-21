@@ -37,6 +37,8 @@ namespace SelectUnknown
         #region App 信息
         public static string APP_NAME => GetAssemblyTitle();
         public static string APP_VERSION => GetInformationalVersion();
+
+        public const int VERSION_CODE = 0;
         public static string COPYRIGHT_INFO => GetCopyright();
         public static string GetCopyright()
         {
@@ -434,10 +436,31 @@ namespace SelectUnknown
                     return $"https://yandex.com/images/search?rpt=imageview&url={imageUrl}";
                 case "Google":
                     return $"https://lens.google.com/uploadbyurl?url={imageUrl}";
+                case "百度":
+                    return $"https://baidu.com/";
                 default:
-                    MousePopup("无法识别的以图搜图引擎，已默认使用 Yandex 以图搜图引擎");
-                    LogHelper.Log("无法识别的以图搜图引擎，已默认使用 Yandex 以图搜图引擎", LogLevel.Warn);
-                    return $"https://yandex.com/images/search?rpt=imageview&url={imageUrl}";//默认 Yandex
+                    MousePopup("无法识别的以图搜图引擎，已默认使用 Google 以图搜图引擎");
+                    LogHelper.Log("无法识别的以图搜图引擎，已默认使用 Google 以图搜图引擎", LogLevel.Warn);
+                    return $"https://lens.google.com/uploadbyurl?url={imageUrl}";//默认 Google
+            }
+        }
+        public static string GetTranslateEngineUrl(string text)
+        {
+            text = System.Net.WebUtility.UrlEncode(text);
+            switch (Config.TranslateEngineName)
+            {
+                case "Google":
+                    return $"https://translate.google.com/?sl=auto&tl=zh-CN&text={text}&op=translate";
+                case "DeepL":
+                    return $"https://www.deepl.com/translator#en/zh/{text}";
+                case "Bing":
+                    return $"https://cn.bing.com/translator?ref=TThis&text={text}&from=auto&to=zh-Hans";
+                case "搜狗":
+                    return $"https://fanyi.sogou.com/text?keyword={text}&transfrom=auto&transto=zh-CHS";
+                default:
+                    MousePopup("无法识别的翻译引擎，已默认使用 Google Translate 翻译引擎");
+                    LogHelper.Log("无法识别的翻译引擎，已默认使用 Google Translate 翻译引擎", LogLevel.Warn);
+                    return $"https://translate.google.com/?sl=auto&tl=zh-CN&text={text}&op=translate";//默认 Google Translate
             }
         }
         internal static string GetWebViewUserAgent()// 现在只给了安卓 UA 自定义选项, 以后可能会加更多选项, 所以先留着这个方法占位

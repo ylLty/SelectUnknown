@@ -53,6 +53,10 @@ namespace SelectUnknown.Pages
             {
                 Main.PopupMessageOnConfigWindow("启用安卓用户代理后，夸克\n搜索引擎可能无法正常使用。");
             }
+            if (Config.LensEngineName=="百度")
+            {
+                Main.PopupMessageOnConfigWindow("当前识图引擎不能\n使用安卓 UA 标识");
+            }
         }
 
         private void UsingAndroidUserAgentCheck_Unchecked(object sender, RoutedEventArgs e)
@@ -65,6 +69,22 @@ namespace SelectUnknown.Pages
             if (LensEngineSelect.SelectedItem == null) return;
             string result = LensEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
             Config.LensEngineName = result;
+            ConfigManager.SaveConfig();
+            if (result == "百度")
+            {
+                Main.PopupMessageOnConfigWindow("此识图引擎需要手动粘贴");
+                if (Config.UsingAndroidUserAgent)
+                {
+                    Main.PopupMessageOnConfigWindow("此识图引擎不能\n使用安卓 UA 标识");
+                }
+            }
+        }
+
+        private void TranslateEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TranslateEngineSelect.SelectedItem == null) return;
+            string result = TranslateEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
+            Config.TranslateEngineName = result;
             ConfigManager.SaveConfig();
         }
     }

@@ -18,11 +18,11 @@
                     <TextBlock Text="搜索引擎" VerticalAlignment="Center" FontSize="14" />
                     <ComboBox Name="SearchEngineSelect" Text="Google" IsEditable="True" IsReadOnly="True" SelectionChanged="SearchEngineSelect_SelectionChanged" Width="100" HorizontalAlignment="Right">
                         <ComboBoxItem Content="Google"></ComboBoxItem>
-                        <ComboBoxItem Content="夸克"></ComboBoxItem>
                         <ComboBoxItem Content="Bing (海外版)"></ComboBoxItem>
                         <ComboBoxItem Content="必应"></ComboBoxItem>
                         <ComboBoxItem Content="百度"></ComboBoxItem>
                         <ComboBoxItem Content="Yandex"></ComboBoxItem>
+                        <ComboBoxItem Content="夸克"></ComboBoxItem>
                     </ComboBox>
                     <!--<Button Name="SearchEngine" Content="设置" Margin="10,0,0,0" Background="#FFE89ABD" BorderBrush="#FFE89ABD" VerticalAlignment="Center" HorizontalAlignment="Right" Width="100" Click="SearchEngine_Click"/>-->
                 </DockPanel>
@@ -46,6 +46,22 @@
                     <ComboBox Name="LensEngineSelect" Text="Google" IsEditable="True" IsReadOnly="True" SelectionChanged="LensEngineSelect_SelectionChanged" Width="100" HorizontalAlignment="Right">
                         <ComboBoxItem Content="Google"></ComboBoxItem>
                         <ComboBoxItem Content="Yandex"></ComboBoxItem>
+                        <ComboBoxItem Content="百度"></ComboBoxItem>
+                    </ComboBox>
+                    <!--<Button Name="SearchEngine" Content="设置" Margin="10,0,0,0" Background="#FFE89ABD" BorderBrush="#FFE89ABD" VerticalAlignment="Center" HorizontalAlignment="Right" Width="100" Click="SearchEngine_Click"/>-->
+                </DockPanel>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
+                </Border.Effect>
+            </Border>
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="百度的可能不稳定">
+                <DockPanel>
+                    <TextBlock Text="翻译引擎" VerticalAlignment="Center" FontSize="14" />
+                    <ComboBox Name="TranslateEngineSelect" Text="Google" IsEditable="True" IsReadOnly="True" SelectionChanged="TranslateEngineSelect_SelectionChanged" Width="100" HorizontalAlignment="Right">
+                        <ComboBoxItem Content="Google"></ComboBoxItem>
+                        <ComboBoxItem Content="DeepL"></ComboBoxItem>
+                        <ComboBoxItem Content="Bing"></ComboBoxItem>
+                        <ComboBoxItem Content="搜狗"></ComboBoxItem>
                     </ComboBox>
                     <!--<Button Name="SearchEngine" Content="设置" Margin="10,0,0,0" Background="#FFE89ABD" BorderBrush="#FFE89ABD" VerticalAlignment="Center" HorizontalAlignment="Right" Width="100" Click="SearchEngine_Click"/>-->
                 </DockPanel>

@@ -45,9 +45,14 @@ namespace SelectUnknown
                 MainText.Text = selectedWords;
             }
 
-            Clipboard.SetDataObject(bmps);
+            //Clipboard.SetDataObject(bmps);
             
             screenImg = scrImg;
+
+            isAutoSele = true;
+            AutoSele.Background = selectingBrush;
+            AutoSele.BorderBrush = selectingBrush;
+            AutoSele.Foreground = selectingForeBrush;
         }
        
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -135,8 +140,9 @@ namespace SelectUnknown
         }
         bool isFirstNavigation = true;
         Int16 navigationTimes = 0;
-        private void webView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
+        private async void webView_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
+            if (webView == null || webView.CoreWebView2 == null) return;
             Loading.Visibility = Visibility.Visible;
             navigationTimes++;
             if (isFirstNavigation)
@@ -153,6 +159,7 @@ namespace SelectUnknown
                 currentLensUrl = "";
                 isLensSearching = false;
             }
+            
         }
         /// <summary>
         /// webView加载完成时调用
@@ -284,34 +291,104 @@ namespace SelectUnknown
         {
             Bitmap croppedImg = GetSelectedImg();
             if (croppedImg == null) return;
-            ImageToLens(croppedImg);
-            if (croppedImg.Height >= 500 && croppedImg.Width >= 500)
-            {
-                Main.MousePopup("区域过大，无法识别");
-                return;
-            }
-            string croppedTxt;
-            TextProcessLoading.Visibility = Visibility.Visible;
-            try
-            {
-                croppedTxt = await OCRHelper.RecognizeAsync(croppedImg);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log($"文字识别时出错: {ex.Message}", LogLevel.Error);
-                Main.MousePopup("文字识别出错，请重试");
-                return;
-            }
-            TextProcessLoading.Visibility = Visibility.Hidden;
+            if (croppedImg.Height <= 1 || croppedImg.Width <= 1) return;
 
-            if (!string.IsNullOrEmpty(croppedTxt))
+            async Task<string> RecTextAsync()
             {
-                MainText.Text = croppedTxt;
+                string txt = null;
+                if (croppedImg.Height >= 500 && croppedImg.Width >= 500)
+                {
+                    Main.MousePopup("区域过大，无法识别");
+                    return null;
+                }
+
+                TextProcessLoading.Visibility = Visibility.Visible;
+                try
+                {
+                    txt = await Task.Run(() => OCRHelper.RecognizeAsync(croppedImg));
+
+                    TextProcessLoading.Visibility = Visibility.Hidden;
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log($"文字识别时出错: {ex}", LogLevel.Error);
+                    Main.MousePopup("文字识别出错，请重试");
+                    return null;
+                }
+                return txt;
+        
             }
-            else
+
+            string croppedTxt = null;
+            string mode = GetMode();
+        ReSelectMode:
+            switch (mode)
             {
-                Main.MousePopup("文字识别失败");
+                case "AutoSele":
+                    croppedTxt = await RecTextAsync();
+                    mode = GetAutoMode(croppedTxt);
+                    goto ReSelectMode;// 得到结果后重新选择模式（goto 小用不算用，写别的更麻烦）
+                case "TextOnly":
+                    croppedTxt = await RecTextAsync();
+                    if (!string.IsNullOrEmpty(croppedTxt))
+                    {
+                        MainText.Text = croppedTxt;
+                        //Main.MousePopup("文字识别完成，结果已显示在文本处理面板");
+                        LogHelper.Log("文字识别完成，结果已显示在文本处理面板");
+                    }
+                    else
+                    {
+                        Main.MousePopup("未能识别出文字");
+                        LogHelper.Log("未能识别出文字", LogLevel.Warn);
+                    }
+                    string scUrl = Main.GetSESearchingUrl(croppedTxt);
+                    webView.CoreWebView2.Navigate(scUrl);
+                    LogHelper.Log("用户进行了一次从框选区域中搜索文字");
+                    break;
+                case "ImgOnly":
+                    ImageToLens(croppedImg);
+                    break;
+                case "TranslateOnly":
+                    croppedTxt = await RecTextAsync();
+                    if (!string.IsNullOrEmpty(croppedTxt))
+                    {
+                        MainText.Text = croppedTxt;
+                        //Main.MousePopup("文字识别完成，结果已显示在文本处理面板");
+                        LogHelper.Log("文字识别完成，结果已显示在文本处理面板");
+                    }
+                    else
+                    {
+                        Main.MousePopup("未能识别出文字");
+                        LogHelper.Log("未能识别出文字", LogLevel.Warn);
+                    }
+                    string tsltUrl = Main.GetTranslateEngineUrl(croppedTxt);
+                    webView.CoreWebView2.Navigate(tsltUrl);
+                    LogHelper.Log("用户进行了一次从框选区域中翻译文字");
+                    break;
+                case "OcrOnly":
+                    croppedTxt = await RecTextAsync();
+                    if (!string.IsNullOrEmpty(croppedTxt))
+                    {
+                        MainText.Text = croppedTxt;
+                        //Main.MousePopup("文字识别完成，结果已显示在文本处理面板");
+                        LogHelper.Log("文字识别完成，结果已显示在文本处理面板");
+                    }
+                    else
+                    {
+                        Main.MousePopup("未能识别出文字");
+                        LogHelper.Log("未能识别出文字", LogLevel.Warn);
+                    }
+                    break;
+                case "None":
+                    Clipboard.SetImage(croppedImg);
+                    LogHelper.Log("不进行操作");
+                    break;
+                default:
+                    Main.MousePopup("错误：未知的处理模式");
+                    LogHelper.Log($"未知的处理模式: {mode}", LogLevel.Error);
+                    break;
             }
+            
         }
         /// <summary>
         /// 分析图片
@@ -321,7 +398,16 @@ namespace SelectUnknown
         public async void ImageToLens(Bitmap croppedImg)
         {
             Loading.Visibility = Visibility.Visible;
-            string imageUrl = await LitterboxUploader.SendImageToLitterboxAndGetUrl(croppedImg);
+            string imageUrl = "无";
+            if (!(Config.LensEngineName == "百度" || Config.LensEngineName == "Bing"))
+            {
+                imageUrl = await LitterboxUploader.SendImageToLitterboxAndGetUrl(croppedImg);
+            }
+            else 
+            { 
+                Main.MousePopup("当前引擎暂不支持图片快捷上传，烦请手动粘贴（已复制）", 2000);
+                Clipboard.SetImage(croppedImg);
+            }
             if (string.IsNullOrEmpty(imageUrl))
             {
                 Main.MousePopup("图片上传失败，请检测网络，然后重试");
@@ -337,7 +423,6 @@ namespace SelectUnknown
                 lensTimes = navigationTimes;
                 LogHelper.Log($"用户完成了一次框选并上传至 {Config.LensEngineName} 进行分析");
             }
-            Clipboard.SetImage(croppedImg);
         }
         private Bitmap GetSelectedImg()
         {
@@ -634,7 +719,7 @@ namespace SelectUnknown
             {
                 text = MainText.SelectedText;
             }
-            string translateUri = $"https://translate.google.com/?hl=zh-cn&sl=auto&tl=zh-CN&text={text}&op=translate";
+            string translateUri = Main.GetTranslateEngineUrl(text);
             webView.CoreWebView2.Navigate(translateUri);
             LogHelper.Log("用户进行了一次从文本处理框中翻译");
         }
@@ -659,6 +744,7 @@ namespace SelectUnknown
         private void SaveScreen_Click(object sender, RoutedEventArgs e)
         {
             string filePath = ScreencatchHelper.GetScreenshotFilePath();
+            Clipboard.SetImage(screenImg);
             screenImg.Save(filePath, ImageFormat.Png);
             Main.MousePopup($"截图已保存!", 2000);
             LogHelper.Log($"截图已保存至 {filePath}", LogLevel.Info);
@@ -689,21 +775,210 @@ namespace SelectUnknown
             Main.OpenConfigWindow();
             LogHelper.Log("用户从框定即搜窗口打开了设置窗口");
         }
-        #region 控件获取焦点时取消框选
-        private void ToolBox_GotFocus(object sender, RoutedEventArgs e)
+        
+
+        private void SaveImg_Click(object sender, RoutedEventArgs e)
         {
-            ShutdownSelectRectangleMode(true);//免得在选中其他面板时还在框选 同时又不要取消框选
+            Bitmap bitmap = GetSelectedImg();
+            Clipboard.SetImage(bitmap);
+            string filePath = ScreencatchHelper.GetScreenshotFilePath();
+            try
+            {
+                bitmap.Save(filePath, ImageFormat.Png);
+                Main.MousePopup($"图片已保存!", 2000);
+                LogHelper.Log($"图片已保存至 {filePath}", LogLevel.Info);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log($"保存图片时出错: {ex}", LogLevel.Error);
+                Main.MousePopup("保存图片时出错，请重试");
+            }
+        }
+        #region 模式选择
+        static BrushConverter brushConverter = new BrushConverter();
+        static System.Windows.Media.Brush defaultBrush = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#00bcd4");
+        static System.Windows.Media.Brush selectingBrush = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#0b57cf");
+        static System.Windows.Media.Brush foreBrush = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#FF292929");
+        static System.Windows.Media.Brush selectingForeBrush = (System.Windows.Media.Brush)brushConverter.ConvertFromString("#ffffff");
+        public static bool isAutoSele { get; private set; } = true;
+        public static bool isTextOnly { get; private set; } = false;
+        public static bool isImgOnly { get; private set; } = false;
+        public static bool isTranslateOnly { get; private set; } = false;
+        public static bool isOcrOnly { get; private set; } = false;
+        private void AutoSele_Click(object sender, RoutedEventArgs e)
+        {
+            if (isAutoSele)
+            {
+                isAutoSele = false;
+                AutoSele.Background = defaultBrush;
+                AutoSele.BorderBrush = defaultBrush;
+                AutoSele.Foreground = foreBrush;
+            }
+            else
+            {
+                isAutoSele = true;
+                AutoSele.Background = selectingBrush;
+                AutoSele.BorderBrush = selectingBrush;
+                AutoSele.Foreground = selectingForeBrush;
+            }
+            ShutdownOtherModes("AutoSele");
         }
 
-        private void Browser_GotFocus(object sender, RoutedEventArgs e)
+        private void TextOnly_Click(object sender, RoutedEventArgs e)
         {
-            ShutdownSelectRectangleMode(true);//免得在选中其他面板时还在框选 同时又不要取消框选
+            if (isTextOnly)
+            {
+                isTextOnly = false;
+                TextOnly.Background = defaultBrush;
+                TextOnly.BorderBrush = defaultBrush;
+                TextOnly.Foreground = foreBrush;
+            }
+            else
+            {
+                isTextOnly = true;
+                TextOnly.Background = selectingBrush;
+                TextOnly.BorderBrush = selectingBrush;
+                TextOnly.Foreground = selectingForeBrush;
+            }
+            ShutdownOtherModes("TextOnly");
         }
 
-        private void TextProcess_GotFocus(object sender, RoutedEventArgs e)
+        private void ImgOnly_Click(object sender, RoutedEventArgs e)
         {
-            ShutdownSelectRectangleMode(true);//免得在选中其他面板时还在框选 同时又不要取消框选
+            if (isImgOnly)
+            {
+                isImgOnly = false;
+                ImgOnly.Background = defaultBrush;
+                ImgOnly.BorderBrush = defaultBrush;
+                ImgOnly.Foreground = foreBrush;
+            }
+            else
+            {
+                isImgOnly = true;
+                ImgOnly.Background = selectingBrush;
+                ImgOnly.BorderBrush = selectingBrush;
+                ImgOnly.Foreground = selectingForeBrush;
+            }
+            ShutdownOtherModes("ImgOnly");
+        }
+
+        private void TranslateOnly_Click(object sender, RoutedEventArgs e)
+        {
+            if (isTranslateOnly)
+            {
+                isTranslateOnly = false;
+                TranslateOnly.Background = defaultBrush;
+                TranslateOnly.BorderBrush = defaultBrush;
+                TranslateOnly.Foreground = foreBrush;
+            }
+            else
+            {
+                isTranslateOnly = true;
+                TranslateOnly.Background = selectingBrush;
+                TranslateOnly.BorderBrush = selectingBrush;
+                TranslateOnly.Foreground = selectingForeBrush;
+            }
+            ShutdownOtherModes("TranslateOnly");
+        }
+
+        private void OcrOnly_Click(object sender, RoutedEventArgs e)
+        {
+            if (isOcrOnly)
+            {
+                isOcrOnly = false;
+                OcrOnly.Background = defaultBrush;
+                OcrOnly.BorderBrush = defaultBrush;
+                OcrOnly.Foreground = foreBrush;
+            }
+            else
+            {
+                isOcrOnly = true;
+                OcrOnly.Background = selectingBrush;
+                OcrOnly.BorderBrush = selectingBrush;
+                OcrOnly.Foreground = selectingForeBrush;
+            }
+            ShutdownOtherModes("OcrOnly");
+        }
+        bool exeing = false;
+        private void ShutdownOtherModes(string except)
+        {
+            if (exeing) return;//防止递归调用
+            exeing = true;
+            //return;
+            if (except != "AutoSele" && isAutoSele) AutoSele_Click(null, null);
+            if (except != "TextOnly" && isTextOnly) TextOnly_Click(null, null);
+            if (except != "ImgOnly" && isImgOnly) ImgOnly_Click(null, null);
+            if (except != "TranslateOnly" && isTranslateOnly) TranslateOnly_Click(null, null);
+            if (except != "OcrOnly" && isOcrOnly) OcrOnly_Click(null, null);
+            Task.Run(() =>
+            {
+                Thread.Sleep(100);
+                exeing = false;
+            });
+        }
+
+        private string GetMode()
+        {
+            if (isAutoSele) return "AutoSele";
+            if (isTextOnly) return "TextOnly";
+            if (isImgOnly) return "ImgOnly";
+            if (isTranslateOnly) return "TranslateOnly";
+            if (isOcrOnly) return "OcrOnly";
+            return "None";
+        }
+        /// <summary>
+        /// 智能判断模式，根据用户选择的区域自动判断是进行文本处理还是图片分析，并返回相应的结果
+        /// </summary>
+        /// <returns></returns>
+        private string GetAutoMode(string croppedTxt)
+        {
+            Bitmap selectedImg = GetSelectedImg();
+            if (selectedImg == null) return "TextOnly";
+            // 正式开始判断
+            if (string.IsNullOrWhiteSpace(croppedTxt)) return "ImgOnly";// 没有识别出文字返回图片识别
+
+            if (selectedImg.Height >= 70) return "ImgOnly"; //太高了，认为是框图片
+
+            if (IsEnglishStringASentence(croppedTxt)) return "TranslateOnly";//全是英文且较长（可能是句子）我认为是在翻译
+            
+            return "TextOnly";//默认搜索文字
+        }
+        private bool IsEnglishStringASentence(string str)
+        {
+            if (HasNonAscii(str)) return false; // 有中文返回不是
+            if (GetWordsCount(str) >= 4) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// 检测字符串有无汉字（或其他非 ASCII 字符）有汉字true
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        private bool HasNonAscii(string str)
+        {
+            foreach (char c in str)
+            {
+                if (c > 127) return true; // 发现一个非ASCII立即返回
+            }
+            return false;
+        }
+        private int GetWordsCount(string sentence)
+        {
+            string[] words = sentence.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            int wordCount = words.Length;
+            return wordCount;
         }
         #endregion
+
+        private void ScreenImage_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ShutdownSelectRectangleMode();
+        }
+
+        private void SelectionCanvas_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ShutdownSelectRectangleMode();
+        }
     }
 }

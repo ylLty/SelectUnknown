@@ -25,6 +25,8 @@
 	<Copyright>Copyright © 2026 yl_lty</Copyright>
 
 	<ApplicationIcon>res\logo.ico</ApplicationIcon>
+
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

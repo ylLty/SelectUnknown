@@ -25,7 +25,8 @@ namespace SelectUnknown.ConfigManagment
         #region 服务设置
         public static string SearchEngineName { get; set; } = "Google";
         public static bool UsingAndroidUserAgent { get; set; } = true;
-        public static string LensEngineName { get; set; } = "Yandex";
+        public static string LensEngineName { get; set; } = "Google";
+        public static string TranslateEngineName { get; set; } = "Google";
         #endregion
     }
 }
