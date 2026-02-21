@@ -98,5 +98,10 @@ namespace SelectUnknown
         {
             mainFrame.Navigate(ServicePage.Instance);
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() => Main.CheckUpdate());
+        }
     }
 }

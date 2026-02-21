@@ -55,7 +55,8 @@ namespace SelectUnknown.Pages
 
         private void CheckUpdate_Click(object sender, RoutedEventArgs e)
         {
-
+            Main.PopupMessageOnConfigWindow("请稍候");
+            Task.Run(() => Main.CheckUpdate(true));
         }
 
         private void VisitOpenSourceLicense_Click(object sender, RoutedEventArgs e)

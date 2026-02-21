@@ -129,6 +129,7 @@ namespace SelectUnknown
                 LogHelper.Log("已设置 WebView2 使用安卓用户代理");
             }
             SelectRectangle_Click(sender, e);
+            Task.Run(() => Main.CheckUpdate(false));
         }
         private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {

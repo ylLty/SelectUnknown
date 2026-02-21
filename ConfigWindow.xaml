@@ -10,6 +10,7 @@
         Background="{DynamicResource MaterialDesign.Brush.Background}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
+        Loaded="Window_Loaded"
         Title="配置 - Select Unknown" Height="630" Width="920">
 
     <Grid Cursor="" >

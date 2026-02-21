@@ -8,10 +8,17 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Security;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Authentication;
+using System.Security.Policy;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +28,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Windows.Media.Protection.PlayReady;
 using static System.Net.WebRequestMethods;
 using Application = System.Windows.Application;
 using Brushes = System.Windows.Media.Brushes;
@@ -229,6 +237,69 @@ namespace SelectUnknown
             {
                 // 捕获 ArgumentException, NotSupportedException 等
                 return false;
+            }
+        }
+        private static bool refused = false;
+        public static async Task CheckUpdate(bool proactive = false)
+        {
+            if (refused && !proactive) return;
+
+            var handler = new HttpClientHandler { UseProxy = false };
+
+            HttpClient client = new HttpClient(handler);
+            string url = "https://gitee.com/ylLty/ylLtyStaticRes/raw/main/SelectUnknown/update.json";// 老子不信这个还用不了
+            
+            // UA 标识
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "Mozilla/5.0 (compatible; SelectUnknown/1.0)"
+            ); 
+            string json;
+            try
+            {
+                // 发送 GET 请求并获取字符串内容
+                json = await client.GetStringAsync(url);
+            }
+            catch (HttpRequestException ex)
+            {
+                LogHelper.Log($"检查更新失败：无法获取更新信息，异常信息: {ex}", LogLevel.Warn);
+                MousePopup("检查更新失败，请检查网络");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(json))
+            {
+                LogHelper.Log("检查更新失败：未能获取更新信息", LogLevel.Warn);
+                return;
+            }
+            AppUpdateInfo info;
+            // 解析 JSON
+            try
+            {
+                info = JsonSerializer.Deserialize<AppUpdateInfo>(json);
+            }
+            catch (JsonException ex)
+            {
+                LogHelper.Log($"检查更新失败：解析更新信息时发生错误，异常信息: {ex}", LogLevel.Warn);
+                return;
+            }
+            if (info.VersionCode > VERSION_CODE)
+            {
+                LogHelper.Log($"检查更新结果：发现新版本 {info.Version} (VersionCode: {info.VersionCode})，更新内容: {info.ReleaseSummary}");
+                DialogResult messageBoxButton = MessageBox.Show($"发现新版本 {info.Version}！\n\n更新内容：{info.ReleaseSummary}\n\n点击确定前往下载页面", "发现新版本！", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                if (messageBoxButton == DialogResult.OK)
+                {
+                    OpenUrl(info.DownLoadUrl);
+                    LogHelper.Log($"用户选择更新，已打开下载链接: {info.DownLoadUrl}");
+                }
+                else
+                {
+                    refused = true;
+                }
+                LogHelper.Log($"用户选择 {(messageBoxButton == DialogResult.OK ? "更新" : "取消")}");
+            }
+            else if(proactive)
+            {
+                MousePopup("已是最新版本");
             }
         }
         #region 鼠标消息弹窗
@@ -617,5 +688,13 @@ namespace SelectUnknown
 
         
         #endregion
+    }
+    public class AppUpdateInfo
+    {
+        // 属性名与 JSON 键名一致时会自动匹配
+        public string Version { get; set; }
+        public int VersionCode { get; set; }
+        public string ReleaseSummary { get; set; }
+        public string DownLoadUrl { get; set; }
     }
 }
