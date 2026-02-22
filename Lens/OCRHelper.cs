@@ -30,7 +30,7 @@ namespace SelectUnknown.Lens
         public static PaddleOCRJson.OcrClient client;
         public static bool IsPaddleOcrEngineReady { get; private set; } = false;
         public static string DownloadUrl = "";
-        public static async void InitOcr()
+        public static async Task InitOcr()
         {
             // 先检查下载地址
             var handler = new HttpClientHandler { UseProxy = false };

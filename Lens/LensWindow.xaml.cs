@@ -224,6 +224,7 @@ namespace SelectUnknown
             if (Main.IsUrl(code.Text))
             {
                 Main.OpenUrl(code.Text);
+                ShutdownWindow();
             }
             else
             {
@@ -412,12 +413,13 @@ namespace SelectUnknown
             if (croppedImg == null) return;
             if (croppedImg.Height <= 1 || croppedImg.Width <= 1) return;
 
-            async Task<string> RecTextAsync()
+            async Task<string> RecTextAsync(bool silent = false)
             {
                 string txt = null;
                 if (croppedImg.Height >= 500 && croppedImg.Width >= 500)
                 {
-                    Main.MousePopup("区域过大，无法识别");
+                    if (!silent)
+                        Main.MousePopup("区域过大，无法识别");
                     return null;
                 }
 
@@ -509,6 +511,7 @@ namespace SelectUnknown
             }
             
         }
+        static DateTime failTime;
         /// <summary>
         /// 分析图片
         /// </summary>
@@ -520,15 +523,24 @@ namespace SelectUnknown
             string imageUrl = "无";
             if (!(Config.LensEngineName == "百度" || Config.LensEngineName == "Bing"))
             {
-                imageUrl = await LitterboxUploader.SendImageToLitterboxAndGetUrl(croppedImg);
+                if( (DateTime.Now - failTime).TotalSeconds >= 40)// 40s 冷却
+                {
+                    imageUrl = await LitterboxUploader.SendImageToLitterboxAndGetUrl(croppedImg);
+                }
+                else
+                {
+                    Main.MousePopup("图片上传失败，请检测网络，或尝试手动粘贴（已复制）", 2000);
+                }
             }
             else 
             { 
                 Main.MousePopup("当前引擎暂不支持图片快捷上传，烦请手动粘贴（已复制）", 2000);
                 Clipboard.SetImage(croppedImg);
             }
+
             if (string.IsNullOrEmpty(imageUrl))
             {
+                failTime = DateTime.Now;
                 Main.MousePopup("图片上传失败，请检测网络，或尝试手动粘贴（已复制）");
                 Clipboard.SetImage(croppedImg);
                 Loading.Visibility = Visibility.Collapsed;

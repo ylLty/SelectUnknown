@@ -83,10 +83,12 @@ public static class TrayHelper
     // 托盘右键菜单的退出操作
     private static void ExitMenuItemClick(object? sender, EventArgs e)
     {
-        Cleanup(); 
-        OCRHelper.engine.Dispose();
-        OCRHelper.client.Dispose();
-
+        Cleanup();
+        if (OCRHelper.IsPaddleOcrEngineReady)
+        {
+            OCRHelper.engine.Dispose();
+            OCRHelper.client.Dispose();
+        }
         LogHelper.Log("托盘图标及文字识别引擎已被清理，应用程序即将退出", LogLevel.Info);
         
         Environment.Exit(0);  // 退出应用程序

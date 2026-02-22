@@ -53,10 +53,33 @@
 
 # 快速开始
 </div>
+
+### 下载软件
+
+
+
+1、点此下载最新版安装包
+
+
+
+### （额外）下载 PaddleOCR-json （更优秀的 OCR 引擎）
+
+1、下载 PaddleOCR-json 引擎
+
+通过 [GitHub](https://github.com/aki-0929/PaddleOCRJson.NET/releases/download/default_runtime/default_runtime.zip) （国内访问受限） 或 [夸克网盘]() 
+
+
 <div align="center">
 
 # 生成指南
 </div>
+
+本项目需要使用 Visual Studio 2022 生成
+
+克隆本仓库后生成即可
+
+若要发行 .msi 的安装程序，请参见此文档：[Visual Studio 安装程序项目和 .NET | Microsoft Learn](https://learn.microsoft.com/zh-cn/visualstudio/deployment/installer-projects-net-core?view=visualstudio)
+
 <div align="center">
 
 # 其他说明

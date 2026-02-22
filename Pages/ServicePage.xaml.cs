@@ -94,7 +94,7 @@ namespace SelectUnknown.Pages
             ConfigManager.SaveConfig();
         }
 
-        private void OcrEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void OcrEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (OcrEngineSelect.SelectedItem == null) return;
             string result = OcrEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
@@ -108,7 +108,7 @@ namespace SelectUnknown.Pages
             {
                 try
                 {
-                    OCRHelper.InitOcr();
+                    await OCRHelper.InitOcr();
                     break;
                 }
                 catch (Exception ex)

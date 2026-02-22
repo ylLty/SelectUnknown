@@ -502,12 +502,12 @@ namespace SelectUnknown
         }
         public static string GetLensEngineUrl(string imageUrl)
         {
-            if (string.IsNullOrEmpty(imageUrl))
+            if (string.IsNullOrEmpty(imageUrl) || imageUrl == "无")
             {
                 switch (Config.LensEngineName)
                 {
                     case "Yandex":
-                        return $"https://yandex.com/images/search?rpt=imageview&url={imageUrl}";
+                        return $"https://yandex.com/images/search?rpt=imageview&url=";
                     case "Google":
                         return $"https://google.com/";
                     case "百度":
@@ -596,7 +596,7 @@ namespace SelectUnknown
         /// <summary>
         /// 初始化整个应用
         /// </summary>
-        internal static void Init()
+        internal static async void Init()
         {
             LogHelper.InitLog();
             LogHelper.Log("日志初始化成功!");
@@ -646,7 +646,7 @@ namespace SelectUnknown
 
             try
             {
-                OCRHelper.InitOcr();
+                await OCRHelper.InitOcr();
             }
             catch (Exception ex)
             {
