@@ -56,17 +56,27 @@
 
 ### 下载软件
 
+1、[点此下载最新版安装包](https://github.com/ylLty/SelectUnknown/releases/latest)
 
-
-1、点此下载最新版安装包
-
-
+2、根据发行说明安装
 
 ### （额外）下载 PaddleOCR-json （更优秀的 OCR 引擎）
 
+安装指导：
+
 1、下载 PaddleOCR-json 引擎
 
-通过 [GitHub](https://github.com/aki-0929/PaddleOCRJson.NET/releases/download/default_runtime/default_runtime.zip) （国内访问受限） 或 [夸克网盘]() 
+通过 [GitHub](https://github.com/aki-0929/PaddleOCRJson.NET/releases/download/default_runtime/default_runtime.zip) （国内访问受限） 或 [夸克网盘](https://pan.quark.cn/s/6470fd185c55) 
+
+2、打开软件根目录中 PaddleOCR-json 文件夹
+
+3、将 default_runtime.zip 中的所有文件解压于 PaddleOCR-json 文件夹中
+
+4、重新选择引擎"
+
+ 
+
+然后就可以运行了
 
 
 <div align="center">
@@ -95,3 +105,11 @@
 
 # 赞助开发
 </div>
+
+如果你觉得我的软件好用，请给我一杯咖啡
+
+允许通过爱发电赞助开发者
+
+[点击这里](https://afdian.com/a/yl_lty)打开爱发电赞助页面
+
+所有赞助者将出现在[此名单](https://github.com/ylLty/SelectUnknown/blob/master/docs/list-of-Sponsors.md)中（可备注匿名），感谢你们的支持。
