@@ -27,6 +27,7 @@ namespace SelectUnknown.ConfigManagment
         public static bool UsingAndroidUserAgent { get; set; } = true;
         public static string LensEngineName { get; set; } = "Google";
         public static string TranslateEngineName { get; set; } = "Google";
+        public static string OcrEngineName { get; set; } = "Windows 内置";
         #endregion
     }
 }

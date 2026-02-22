@@ -1,11 +1,17 @@
-﻿using System;
+﻿using PaddleOCRJson;
+using SelectUnknown.ConfigManagment;
+using SelectUnknown.LogManagement;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,29 +19,99 @@ using Windows.Graphics.Imaging;
 using Windows.Media.Ocr;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using System.Runtime.InteropServices;
+using OcrEngine = Windows.Media.Ocr.OcrEngine;
 
 namespace SelectUnknown.Lens
 {
     internal class OCRHelper
     {
+        public static PaddleOCRJson.OcrEngine engine;
+        public static PaddleOCRJson.OcrClient client;
+        public static bool IsPaddleOcrEngineReady { get; private set; } = false;
+        public static void InitOcr()
+        {
+            if (Config.OcrEngineName != "PaddleOCR-json")
+            {
+                if (IsPaddleOcrEngineReady)
+                { 
+                    engine.Dispose();
+                    client.Dispose();
+                    IsPaddleOcrEngineReady = false;
+                }
+                LogHelper.Log("使用系统内置 OCR 引擎, 无需初始化");
+                return;
+            }
+            string enginePath = GetOcrEnginePath();
+            Directory.CreateDirectory(Path.GetDirectoryName(enginePath));
+            if (File.Exists(enginePath))
+            {
+                LogHelper.Log($"PaddleOCR-json 引擎路径: {enginePath}");
+            }
+            else
+            {
+                LogHelper.Log($"未找到 PaddleOCR-json 引擎，路径: {enginePath}", LogManagement.LogLevel.Error);
+                throw new FileNotFoundException("未找到 PaddleOCR-json 引擎", enginePath);
+            }
+            LogHelper.Log("正在启动 PaddleOCR-json 引擎...");
+
+            // 创建一个控制台
+            AllocConsole();
+
+            // 立刻隐藏
+            var hConsole = GetConsoleWindow();
+            ShowWindow(hConsole, SW_HIDE);
+
+            var startupArgs = OcrEngineStartupArgs.WithPipeMode(enginePath);
+
+            engine = new PaddleOCRJson.OcrEngine(startupArgs);
+            client = engine.CreateClient();
+
+            LogHelper.Log("PaddleOCR-json 引擎启动成功");
+            IsPaddleOcrEngineReady = true;
+        }
+        
         public static async Task<string> RecognizeAsync(Bitmap bitmap)
         {
+            string tmpFolderPath;
+            string tmpPath;
+            string txt;
+            if (Config.OcrEngineName == "PaddleOCR-json")
+            {
+                // PaddleOCR-json 引擎逻辑
+                tmpFolderPath = Path.Combine(Path.GetTempPath(), "SelectUnknown", "tmp");
+                Directory.CreateDirectory(tmpFolderPath);
+                tmpPath = Path.Combine(tmpFolderPath, $"ocr_temp_{Guid.NewGuid()}.png");
+                bitmap.Save(tmpPath, System.Drawing.Imaging.ImageFormat.Png);
+
+                txt = await PaddleOcrRecognizeAsync(client, tmpPath);
+                txt = ReadJsonForPaddleOCR(txt);
+                // 清理临时文件
+                if (File.Exists(tmpPath))
+                {
+                    try
+                    {
+                        File.Delete(tmpPath);
+                    }
+                    catch { /* 忽略删除失败 */ }
+                }
+                return txt;
+            }
+            // 系统内置 OCR 逻辑
             bitmap = await OptimizeBitmapForOcr(bitmap);
             //Clipboard.SetImage(bitmap);
-            string tmpFolderPath = Path.Combine(Path.GetTempPath(), "SelectUnknown", "tmp");
+            tmpFolderPath = Path.Combine(Path.GetTempPath(), "SelectUnknown", "tmp");
             Directory.CreateDirectory(tmpFolderPath);
-            string tmpPath = Path.Combine(tmpFolderPath, $"ocr_temp_{Guid.NewGuid()}.png");
+            tmpPath = Path.Combine(tmpFolderPath, $"ocr_temp_{Guid.NewGuid()}.png");
             bitmap.Save(tmpPath, System.Drawing.Imaging.ImageFormat.Png);
             
-            string txt = await RecognizeTextByWinSysOcrAsync(tmpPath);
+            txt = await RecognizeTextByWinSysOcrAsync(tmpPath);
             
             // 清理临时文件
             if (File.Exists(tmpPath))
             {
                 try
                 {
-                    //File.Delete(tmpPath);
+                    File.Delete(tmpPath);
                 }
                 catch { /* 忽略删除失败 */ }
             }
@@ -443,6 +519,97 @@ namespace SelectUnknown.Lens
                 return result.Text; // 直接返回完整文本
             }
         }
+        #endregion
+        #region PaddleOCR-json 引擎
+        public static string GetOcrEnginePath()
+        {
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PaddleOCR-json", "PaddleOCR-json.exe");
+            return path;
+        }
+        public static async Task<string> PaddleOcrRecognizeAsync(OcrClient client, string imagePath)
+        {
+            if (!File.Exists(imagePath))
+            {
+                throw new FileNotFoundException("无效的路径", imagePath);
+            }
+
+            var startTime = DateTime.Now;
+            try
+            {
+                var result = client.FromImageFile(imagePath);
+                var elapsed = (DateTime.Now - startTime).TotalMilliseconds;
+                LogHelper.Log($"识别完成 (耗时: {elapsed:F2}ms)");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var elapsed = (DateTime.Now - startTime).TotalMilliseconds;
+                LogHelper.Log($"识别失败 (耗时: {elapsed:F2}ms): {ex.Message}");
+                return "";
+            }
+        }
+        public static string? ReadJsonForPaddleOCR(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+
+            try
+            {
+                using JsonDocument doc = JsonDocument.Parse(json);
+                JsonElement root = doc.RootElement;
+
+                // 检查是否存在code属性
+                if (!root.TryGetProperty("code", out JsonElement codeElement))
+                    return null;
+
+                // 检查code是否为100
+                if (codeElement.GetInt32() != 100)
+                {
+                    LogHelper.Log($"PaddleOCR-json 识别失败，code: {codeElement.GetInt32()}", LogLevel.Error);
+                    return null;
+                }
+
+                // 检查是否存在data属性
+                if (!root.TryGetProperty("data", out JsonElement dataElement))
+                    return null;
+
+                // 检查data是否为数组且长度大于0
+                if (dataElement.ValueKind != JsonValueKind.Array || dataElement.GetArrayLength() == 0)
+                    return null;
+
+                // 获取第一个元素
+                JsonElement firstItem = dataElement[0];
+
+                // 检查是否存在text属性
+                if (!firstItem.TryGetProperty("text", out JsonElement textElement))
+                    return null;
+
+                // 获取text值
+                return textElement.GetString();
+            }
+            catch (JsonException)
+            {
+                // JSON格式错误
+                return null;
+            }
+            catch (Exception)
+            {
+                // 其他异常
+                return null;
+            }
+        }
+        #region 隐藏控制台用
+        [DllImport("kernel32.dll")]
+        static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        #endregion
         #endregion
     }
 }

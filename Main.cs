@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using SelectUnknown.ConfigManagment;
 using SelectUnknown.HotKeyMan;
+using SelectUnknown.Lens;
 using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
@@ -626,6 +627,19 @@ namespace SelectUnknown
             LogHelper.Log("托盘初始化成功!");
             HotKeyHelper.InitHotKey();
             LogHelper.Log("热键初始化成功!");
+
+            try
+            {
+                OCRHelper.InitOcr();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log($"OCR 引擎初始化失败，异常信息: {ex}", LogLevel.Error);
+                MessageBox.Show($"OCR 引擎初始化失败，异常信息: {ex.Message}\n请确保已正确安装 PaddleOCRJson 依赖，并尝试重新启动软件。若无法解决问题，请尝试切换 OCR 引擎", "OCR 初始化失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+            LogHelper.Log("OCR 引擎初始化成功!");
         }
         private static void ShowSessionInfo()
         {

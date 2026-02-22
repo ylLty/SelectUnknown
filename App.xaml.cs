@@ -1,6 +1,8 @@
-﻿using System.Configuration;
+﻿using SelectUnknown.Lens;
+using System.Configuration;
 using System.Data;
 using System.Windows;
+using Windows.Media.Protection.PlayReady;
 
 namespace SelectUnknown
 {
@@ -22,6 +24,12 @@ namespace SelectUnknown
                     break;
                 }
             }
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            OCRHelper.engine.Dispose();
+            OCRHelper.client.Dispose();
+            base.OnExit(e);
         }
     }
 

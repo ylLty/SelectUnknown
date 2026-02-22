@@ -1,5 +1,10 @@
-﻿using System;
+﻿using SelectUnknown.ConfigManagment;
+using SelectUnknown.Lens;
+using SelectUnknown.LogManagement;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
-using SelectUnknown.ConfigManagment;
+using Path = System.IO.Path;
 
 namespace SelectUnknown.Pages
 {
@@ -86,6 +91,51 @@ namespace SelectUnknown.Pages
             string result = TranslateEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
             Config.TranslateEngineName = result;
             ConfigManager.SaveConfig();
+        }
+
+        private void OcrEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (OcrEngineSelect.SelectedItem == null) return;
+            string result = OcrEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
+
+
+            Config.OcrEngineName = result;
+            ConfigManager.SaveConfig();
+            if (OCRHelper.IsPaddleOcrEngineReady && result == "PaddleOCR-json") return;
+            const string downloadUrl = "https://example.com";
+            while (true)
+            {
+                try
+                {
+                    OCRHelper.InitOcr();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    if (ex is FileNotFoundException)
+                    { 
+                        DialogResult dialogResult = System.Windows.Forms.MessageBox.Show($"PaddleOCRJson 引擎未安装，是否前往下载？\n安装指导：\n1、下载 default_runtime.zip \n2、打开软件根目录中 PaddleOCR-json 文件夹（按下确定会一同打开）\n3、将 default_runtime.zip 中的所有文件解压于 PaddleOCR-json 文件夹中\n4、重新选择引擎", "引擎未安装", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                        if (System.Windows.Forms.DialogResult.Yes == dialogResult)
+                        {
+                            Main.OpenUrl(downloadUrl);
+                            string enginePath = Path.GetDirectoryName(OCRHelper.GetOcrEnginePath());
+                            Process.Start(new ProcessStartInfo()
+                            {
+                                FileName = enginePath,
+                                UseShellExecute = true,
+                                Verb = "open"
+                            });
+                        }
+                        OcrEngineSelect.Text = "Windows 内置";// 回退到 Windows 内置 OCR 引擎
+                        OcrEngineSelect.SelectedIndex = 0;
+                        Config.OcrEngineName = "Windows 内置";
+                        continue;
+                    }
+                    LogHelper.Log($"OCR 引擎初始化失败，异常信息: {ex}", LogLevel.Error);
+                    System.Windows.Forms.MessageBox.Show($"OCR 引擎初始化失败，异常信息: {ex.Message}\n请确保已正确安装 PaddleOCRJson 依赖，并尝试重新启动软件。若无法解决问题，请尝试切换 OCR 引擎", "OCR 初始化失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
         }
     }
 }
