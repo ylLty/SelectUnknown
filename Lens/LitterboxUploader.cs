@@ -91,7 +91,7 @@ namespace SelectUnknown.Lens
                                 return "PROXY_REJECTED"; // 返回特殊标识，触发外层重试
                             }
 
-                            LogManagement.LogHelper.Log("Litterbox 上传异常：" + ex.Message, LogManagement.LogLevel.Error);
+                            LogManagement.LogHelper.Log("Litterbox 上传异常：" + ex, LogManagement.LogLevel.Error);
                             return null;
                         }
                     }

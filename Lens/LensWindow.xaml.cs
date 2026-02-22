@@ -130,7 +130,125 @@ namespace SelectUnknown
             }
             SelectRectangle_Click(sender, e);
             Task.Run(() => Main.CheckUpdate(false));
+            ScanQRCode(screenImg);
         }
+        #region 二维码识别
+        private async void ScanQRCode(Bitmap bitmap)
+        {
+            bitmap = await Task.Run(() => OCRHelper.ToGrayscaleBitmap(bitmap));//借用一下 OCR 那边的灰度化
+            var results = await Task.Run(() => QrcodeHelper.Decode(bitmap));
+            if (results.Count == 0)
+            {
+                //Main.MousePopup("未识别二维码");
+                return;
+            }
+            DrawCodeCenters(results, bitmap);
+            //foreach (var r in results)
+            //{
+            //    MainText.Text += "\n" + ($"{r.Format} | {r.Text} | Center=({r.Center.X},{r.Center.Y})");
+            //}
+        }
+        private void DrawCodeCenters(IReadOnlyList<CodeResult> codes, Bitmap bitmap)
+        {
+            CodeOverlay.Children.Clear();
+            CodeOverlay.Background = null; // 空白透传，点击穿透到 Image
+            CodeOverlay.IsHitTestVisible = true;
+
+            const double size = 26;
+
+            foreach (var code in codes)
+            {
+                System.Windows.Point pt = GetDisplayPoint(bitmap, code.Center, ScreenImage);
+
+                var border = new Border
+                {
+                    Width = size,
+                    Height = size,
+                    CornerRadius = new CornerRadius(6),
+                    Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(160, 30, 255, 30)),
+                    BorderBrush = System.Windows.Media.Brushes.Lime,
+                    BorderThickness = new Thickness(2),
+                    Cursor = System.Windows.Input.Cursors.Hand,
+                    Tag = code,
+                    IsHitTestVisible = true
+                };
+
+                border.MouseLeftButtonDown += OnCodeLeftClick;
+                border.MouseRightButtonDown += OnCodeRightClick;
+
+                Canvas.SetLeft(border, pt.X - size / 2);
+                Canvas.SetTop(border, pt.Y - size / 2);
+
+                CodeOverlay.Children.Add(border);
+            }
+        }
+        /// <summary>
+        /// 将 Bitmap 中的像素坐标映射到 Image 控件显示坐标
+        /// 适用于 Stretch=UniformToFill
+        /// </summary>
+        /// <summary>
+        /// 将 Bitmap 像素坐标转换为 Image 上的显示坐标（考虑 Stretch=Uniform 留白）
+        /// </summary>
+        private static System.Windows.Point GetDisplayPoint(Bitmap bitmap, PointF center, System.Windows.Controls.Image image)
+        {
+            double imgWidth = image.ActualWidth;
+            double imgHeight = image.ActualHeight;
+
+            double bmpWidth = bitmap.Width;
+            double bmpHeight = bitmap.Height;
+
+            // Uniform 缩放比例
+            double scale = Math.Min(imgWidth / bmpWidth, imgHeight / bmpHeight);
+
+            // 计算偏移（空白留白）
+            double offsetX = (imgWidth - bmpWidth * scale) / 2.0;
+            double offsetY = (imgHeight - bmpHeight * scale) / 2.0;
+
+            double x = center.X * scale + offsetX;
+            double y = center.Y * scale + offsetY;
+
+            return new System.Windows.Point(x, y);
+        }
+
+
+
+
+        private void OnCodeLeftClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not Border border)
+                return;
+
+            if (border.Tag is not CodeResult code)
+                return;
+
+            if (Main.IsUrl(code.Text))
+            {
+                Main.OpenUrl(code.Text);
+            }
+            else
+            {
+                Main.MousePopup("二维码内容不是链接，已执行解析操作");
+                MainText.Text = code.Text;
+            }
+            LogHelper.Log("用户左键点击了二维码中心点");
+
+            e.Handled = true;
+        }
+        private void OnCodeRightClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not Border border)
+                return;
+
+            if (border.Tag is not CodeResult code)
+                return;
+
+            MainText.Text = code.Text;
+            Main.MousePopup("二维码内容已显示在文本处理框中");
+            LogHelper.Log("用户右键点击了二维码中心点，二维码内容已显示在文本处理框中");
+            e.Handled = true;
+        }
+
+        #endregion
         private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             Loading.Visibility = Visibility.Collapsed;
@@ -411,19 +529,18 @@ namespace SelectUnknown
             }
             if (string.IsNullOrEmpty(imageUrl))
             {
-                Main.MousePopup("图片上传失败，请检测网络，然后重试");
+                Main.MousePopup("图片上传失败，请检测网络，或尝试手动粘贴（已复制）");
+                Clipboard.SetImage(croppedImg);
                 Loading.Visibility = Visibility.Collapsed;
-                LogHelper.Log("图片上传至 Litterbox 失败，无法使用分析", LogLevel.Error);
+                LogHelper.Log("图片上传至 Litterbox 失败", LogLevel.Error);
             }
-            else
-            {
-                if (webView == null || webView.CoreWebView2 == null) return;
-                currentLensUrl = Main.GetLensEngineUrl(imageUrl);
-                webView.CoreWebView2.Navigate(currentLensUrl);
-                isLensSearching = true;
-                lensTimes = navigationTimes;
-                LogHelper.Log($"用户完成了一次框选并上传至 {Config.LensEngineName} 进行分析");
-            }
+            if (webView == null || webView.CoreWebView2 == null) return;
+            currentLensUrl = Main.GetLensEngineUrl(imageUrl);
+            webView.CoreWebView2.Navigate(currentLensUrl);
+            isLensSearching = true;
+            lensTimes = navigationTimes;
+            LogHelper.Log($"用户完成了一次框选并上传至 {Config.LensEngineName} 进行分析");
+            
         }
         private Bitmap GetSelectedImg()
         {

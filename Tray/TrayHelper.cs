@@ -86,6 +86,7 @@ public static class TrayHelper
         Cleanup(); 
         OCRHelper.engine.Dispose();
         OCRHelper.client.Dispose();
+
         LogHelper.Log("托盘图标及文字识别引擎已被清理，应用程序即将退出", LogLevel.Info);
         
         Environment.Exit(0);  // 退出应用程序

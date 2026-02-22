@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Net.Http;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -28,8 +29,30 @@ namespace SelectUnknown.Lens
         public static PaddleOCRJson.OcrEngine engine;
         public static PaddleOCRJson.OcrClient client;
         public static bool IsPaddleOcrEngineReady { get; private set; } = false;
-        public static void InitOcr()
+        public static string DownloadUrl = "";
+        public static async void InitOcr()
         {
+            // 先检查下载地址
+            var handler = new HttpClientHandler { UseProxy = false };
+
+            HttpClient _client = new HttpClient(handler);
+            string url = "https://gitee.com/ylLty/ylLtyStaticRes/raw/main/SelectUnknown/DownloadUrl.txt";
+
+            // UA 标识
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "Mozilla/5.0 (compatible; SelectUnknown/1.0)"
+            );
+            try
+            {
+                // 发送 GET 请求并获取字符串内容
+                DownloadUrl = await _client.GetStringAsync(url);
+            }
+            catch (HttpRequestException ex)
+            {
+                LogHelper.Log($"获取下载地址失败: {ex}", LogLevel.Warn);
+                return;
+            }
+            //====
             if (Config.OcrEngineName != "PaddleOCR-json")
             {
                 if (IsPaddleOcrEngineReady)
@@ -237,7 +260,7 @@ namespace SelectUnknown.Lens
         /// <summary>
         /// 灰度化
         /// </summary>
-        private static Bitmap ToGrayscaleBitmap(Bitmap src)
+        public static Bitmap ToGrayscaleBitmap(Bitmap src)
         {
             var bmp = new Bitmap(src.Width, src.Height);
 

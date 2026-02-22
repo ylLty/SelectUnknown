@@ -35,6 +35,7 @@ namespace SelectUnknown.Pages
             SearchEngineSelect.SelectedItem = Config.SearchEngineName;
             UsingAndroidUserAgentCheck.IsChecked = Config.UsingAndroidUserAgent;
             LensEngineSelect.Text = Config.LensEngineName;
+            OcrEngineSelect.Text = Config.OcrEngineName;
         }
 
         private void SearchEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -102,7 +103,7 @@ namespace SelectUnknown.Pages
             Config.OcrEngineName = result;
             ConfigManager.SaveConfig();
             if (OCRHelper.IsPaddleOcrEngineReady && result == "PaddleOCR-json") return;
-            const string downloadUrl = "https://example.com";
+
             while (true)
             {
                 try
@@ -117,7 +118,6 @@ namespace SelectUnknown.Pages
                         DialogResult dialogResult = System.Windows.Forms.MessageBox.Show($"PaddleOCRJson 引擎未安装，是否前往下载？\n安装指导：\n1、下载 default_runtime.zip \n2、打开软件根目录中 PaddleOCR-json 文件夹（按下确定会一同打开）\n3、将 default_runtime.zip 中的所有文件解压于 PaddleOCR-json 文件夹中\n4、重新选择引擎", "引擎未安装", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                         if (System.Windows.Forms.DialogResult.Yes == dialogResult)
                         {
-                            Main.OpenUrl(downloadUrl);
                             string enginePath = Path.GetDirectoryName(OCRHelper.GetOcrEnginePath());
                             Process.Start(new ProcessStartInfo()
                             {
@@ -125,6 +125,10 @@ namespace SelectUnknown.Pages
                                 UseShellExecute = true,
                                 Verb = "open"
                             });
+                            if (!string.IsNullOrEmpty(OCRHelper.DownloadUrl))
+                                Main.OpenUrl(OCRHelper.DownloadUrl);
+                            else
+                                Main.PopupMessageOnConfigWindow("未找到下载链接，请前往\n项目主页查看下载方式");
                         }
                         OcrEngineSelect.Text = "Windows 内置";// 回退到 Windows 内置 OCR 引擎
                         OcrEngineSelect.SelectedIndex = 0;

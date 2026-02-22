@@ -502,6 +502,22 @@ namespace SelectUnknown
         }
         public static string GetLensEngineUrl(string imageUrl)
         {
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                switch (Config.LensEngineName)
+                {
+                    case "Yandex":
+                        return $"https://yandex.com/images/search?rpt=imageview&url={imageUrl}";
+                    case "Google":
+                        return $"https://google.com/";
+                    case "百度":
+                        return $"https://baidu.com/";
+                    default:
+                        MousePopup("无法识别的以图搜图引擎，已默认使用 Google 以图搜图引擎");
+                        LogHelper.Log("无法识别的以图搜图引擎，已默认使用 Google 以图搜图引擎", LogLevel.Warn);
+                        return $"https://lens.google.com/uploadbyurl?url={imageUrl}";//默认 Google
+                }
+            }
             switch (Config.LensEngineName)
             {
                 case "Yandex":

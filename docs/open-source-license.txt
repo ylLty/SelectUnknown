@@ -54,3 +54,11 @@ https://github.com/hiroi-sora/PaddleOCR-json
 Copyright (C) hiroi-sora
 Licensed under Apache License 2.0
 OCR 文字识别
+
+----------------
+ZXing.Net
+----------------
+https://github.com/micjahn/ZXing.Net/
+Copyright (C) micjahn
+Licensed under Apache License 2.0
+二维码识别
