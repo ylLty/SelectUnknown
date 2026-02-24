@@ -447,7 +447,7 @@ namespace SelectUnknown
             switch (mode)
             {
                 case "AutoSele":
-                    croppedTxt = await RecTextAsync();
+                    croppedTxt = await RecTextAsync(true);
                     mode = GetAutoMode(croppedTxt);
                     goto ReSelectMode;// 得到结果后重新选择模式（goto 小用不算用，写别的更麻烦）
                 case "TextOnly":
