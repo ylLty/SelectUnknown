@@ -114,7 +114,7 @@
 
 ### 1、通过微信支付或支付宝赞助
 
-<img src="https://github.com/ylLty/SelectUnknown/blob/master/docs/donate-by-alipay.webp?raw=true" width="700" /> <img src="https://github.com/ylLty/SelectUnknown/blob/master/docs/donate-by-wechat.webp?raw=true" width="700" />
+<img src="https://github.com/ylLty/SelectUnknown/blob/master/docs/donate-by-alipay.webp?raw=true" width="450" /> <img src="https://github.com/ylLty/SelectUnknown/blob/master/docs/donate-by-wechat.webp?raw=true" width="500" />
 
 请备注`赞助 Select Unknown - [你的github ID]`。所有赞助者都将公布于[此名单](https://github.com/ylLty/SelectUnknown/blob/master/docs/list-of-Sponsors.md)！(没有Github账号可以填写昵称)
 
