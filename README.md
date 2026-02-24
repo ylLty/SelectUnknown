@@ -6,7 +6,7 @@
 # Select Unknown - 框索未知
 一个集成了[视觉搜索](#visualSearch)、[划词搜索](#textSearch)、[文字识别](#OCR)、[翻译](#translate)、[扫码](#qrcodeScan)、[截图](#screenshot)、[取色](#takeColour)的 Windows 版 “圈定即搜”
 
-![GitHub Repo stars](https://img.shields.io/github/stars/ylLty/SelectUnknown?style=flat-square&color=%23D8B024) ![GitHub Release](https://img.shields.io/github/v/release/ylLty/SelectUnknown?style=flat-square&color=%231a7f37) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/ylLty/SelectUnknown/total?style=flat-square) [![TGCN](https://img.shields.io/badge/交流群-Telegram-blue.svg?style=flat-square&logo=telegram)](https://t.me/SelectUnknownCN)  
+![GitHub Repo stars](https://img.shields.io/github/stars/ylLty/SelectUnknown?style=flat-square&color=%23D8B024) [![GitHub Release](https://img.shields.io/github/v/release/ylLty/SelectUnknown?style=flat-square&color=%231a7f37)](https://github.com/ylLty/SelectUnknown/releases/latest) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/ylLty/SelectUnknown/total?style=flat-square)](https://github.com/ylLty/SelectUnknown/releases/latest) [![TGCN](https://img.shields.io/badge/交流群-Telegram-blue.svg?style=flat-square&logo=telegram)](https://t.me/SelectUnknownCN) [![Static Badge](https://img.shields.io/badge/%E4%BB%8B%E7%BB%8D%E8%A7%86%E9%A2%91-bilibili-pink?style=flat-square&logo=bilibili&logoColor=pink&labelColor=gray&color=pink)](https://www.bilibili.com/video/BV1csfBBoEEG/)
 
 
 
