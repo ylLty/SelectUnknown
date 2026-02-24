@@ -1,6 +1,6 @@
 <div align="center">
 
-简体中文 | English 
+简体中文 | [English](https://github.com/ylLty/SelectUnknown/blob/master/docs/README_en.md)
 
 ![icon](https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/docs/load-window.webp)
 # Select Unknown - 框索未知
