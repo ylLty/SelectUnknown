@@ -1,5 +1,7 @@
 <div align="center">
-[简体中文](https://github.com/ylLty/SelectUnknown/blob/master/README.md) | English 
+
+[简体中文](https://github.com/ylLty/SelectUnknown/blob/master/README.md)  | English 
+
 
 ![icon](https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/docs/load-window.webp)
 # Select Unknown
