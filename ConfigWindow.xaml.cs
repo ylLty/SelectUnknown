@@ -101,7 +101,8 @@ namespace SelectUnknown
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => Main.CheckUpdate());
+            if (ConfigManagment.Config.AutoCheckUpdate)
+                Task.Run(() => Main.CheckUpdate());
         }
     }
 }

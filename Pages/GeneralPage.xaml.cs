@@ -30,10 +30,18 @@ namespace SelectUnknown.Pages
             InitializeComponent();
             IsStartUp.IsChecked = StartupManager.IsStartupEnabled(Main.APP_NAME);
             SilentStart.IsChecked = Config.SilentStart;
+            AutoCheckUpdate.IsChecked = Config.AutoCheckUpdate;
             OldLogDeleteDays.Text = Config.OldLogDeleteDays.ToString();
             ScreenshotPath.Text = Config.ScreenshotFolderPath;
         }
-
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            IsStartUp.IsChecked = StartupManager.IsStartupEnabled(Main.APP_NAME);
+            SilentStart.IsChecked = Config.SilentStart;
+            AutoCheckUpdate.IsChecked = Config.AutoCheckUpdate;
+            OldLogDeleteDays.Text = Config.OldLogDeleteDays.ToString();
+            ScreenshotPath.Text = Config.ScreenshotFolderPath;
+        }
         private void IsStartUp_Checked(object sender, RoutedEventArgs e)
         {
             StartupManager.SetStartup(Main.APP_NAME, true);
@@ -123,5 +131,17 @@ namespace SelectUnknown.Pages
                 ConfigManager.ResetConfig();
             }
         }
+
+        private void AutoCheckUpdate_Checked(object sender, RoutedEventArgs e)
+        {
+            Config.AutoCheckUpdate = true;
+        }
+
+        private void AutoCheckUpdate_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Config.AutoCheckUpdate = false;
+        }
+
+        
     }
 }

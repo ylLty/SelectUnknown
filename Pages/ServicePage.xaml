@@ -13,7 +13,7 @@
 
     <ScrollViewer  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
         <StackPanel>
-            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="谷歌在中国大陆无法访问">
                 <DockPanel>
                     <TextBlock Text="搜索引擎" VerticalAlignment="Center" FontSize="14" />
                     <ComboBox Name="SearchEngineSelect" Text="Google" IsEditable="True" IsReadOnly="True" SelectionChanged="SearchEngineSelect_SelectionChanged" Width="100" HorizontalAlignment="Right">
@@ -40,7 +40,7 @@
                     <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
                 </Border.Effect>
             </Border>
-            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="百度的可能不稳定">
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="百度暂不支持自动上传，需手动粘贴">
                 <DockPanel>
                     <TextBlock Text="识图引擎" VerticalAlignment="Center" FontSize="14" />
                     <ComboBox Name="LensEngineSelect" Text="Google" IsEditable="True" IsReadOnly="True" SelectionChanged="LensEngineSelect_SelectionChanged" Width="100" HorizontalAlignment="Right">
@@ -54,7 +54,7 @@
                     <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
                 </Border.Effect>
             </Border>
-            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="百度的可能不稳定">
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="谷歌在中国大陆无法访问">
                 <DockPanel>
                     <TextBlock Text="翻译引擎" VerticalAlignment="Center" FontSize="14" />
                     <ComboBox Name="TranslateEngineSelect" Text="Google" IsEditable="True" IsReadOnly="True" SelectionChanged="TranslateEngineSelect_SelectionChanged" Width="100" HorizontalAlignment="Right">

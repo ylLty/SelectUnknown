@@ -129,7 +129,8 @@ namespace SelectUnknown
                 LogHelper.Log("已设置 WebView2 使用安卓用户代理");
             }
             SelectRectangle_Click(sender, e);
-            Task.Run(() => Main.CheckUpdate(false));
+            if (Config.AutoCheckUpdate)
+                Task.Run(() => Main.CheckUpdate(false));
             ScanQRCode(screenImg);
         }
         #region 二维码识别

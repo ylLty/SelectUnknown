@@ -13,6 +13,7 @@ namespace SelectUnknown.ConfigManagment
     {
         #region 常规设置
         public static bool SilentStart { get; set; } = false;
+        public static bool AutoCheckUpdate { get; set; } = false;
         public static int OldLogDeleteDays { get; set; } = 2;
         public static string ScreenshotFolderPath { get; set; } = "";
         #endregion
