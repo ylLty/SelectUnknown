@@ -131,18 +131,36 @@ namespace SelectUnknown
             SelectRectangle_Click(sender, e);
             if (Config.AutoCheckUpdate)
                 Task.Run(() => Main.CheckUpdate(false));
-            ScanQRCode(screenImg);
+            try
+            {
+                ScanQRCode(screenImg);
+            }
+            catch { }// 免得刚打开就关闭而出异常
         }
         #region 二维码识别
         private async void ScanQRCode(Bitmap bitmap)
         {
-            bitmap = await Task.Run(() => OCRHelper.ToGrayscaleBitmap(bitmap));//借用一下 OCR 那边的灰度化
+            if (closed) return;// 免得刚打开就关闭而出异常
+            await Task.Run(() =>
+            {
+                try
+                { 
+                    bitmap = OCRHelper.ToGrayscaleBitmap(bitmap);
+                }
+                catch
+                {
+                    return;
+                }
+            });//借用一下 OCR 那边的灰度化
+            if (closed) return;
             var results = await Task.Run(() => QrcodeHelper.Decode(bitmap));
+            if (closed) return; 
             if (results.Count == 0)
             {
                 //Main.MousePopup("未识别二维码");
                 return;
             }
+            if (closed) return;
             DrawCodeCenters(results, bitmap);
             //foreach (var r in results)
             //{

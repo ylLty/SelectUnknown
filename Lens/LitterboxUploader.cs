@@ -50,7 +50,7 @@ namespace SelectUnknown.Lens
 
                 using (var memoryStream = new MemoryStream())
                 {
-                    bitmap.Save(memoryStream, ImageFormat.Png);
+                    bitmap.Save(memoryStream, ImageFormat.Jpeg);
                     byte[] bitmapData = memoryStream.ToArray();
 
                     var boundary = "----WebKitFormBoundary" + DateTime.Now.Ticks.ToString("x");

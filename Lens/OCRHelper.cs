@@ -262,6 +262,8 @@ namespace SelectUnknown.Lens
         /// </summary>
         public static Bitmap ToGrayscaleBitmap(Bitmap src)
         {
+            if (src is null || src == null)
+                throw new Exception("bitmap 为空");
             var bmp = new Bitmap(src.Width, src.Height);
 
             for (int y = 0; y < src.Height; y++)

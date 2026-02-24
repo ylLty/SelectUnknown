@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SelectUnknown.Lens;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -126,7 +127,7 @@ namespace SelectUnknown.LogManagement
 
                 System.Windows.MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show(
                     "Select Unknown 软件运行时发生了未经处理的异常，继续运行可能会出现问题\n按下确定打开日志文件，请将日志文件提交给作者\n按下取消继续运行\n" +
-                    formatted,
+                    ex,
                     "致命错误", 
                     System.Windows.MessageBoxButton.OKCancel, 
                     System.Windows.MessageBoxImage.Error
@@ -134,6 +135,11 @@ namespace SelectUnknown.LogManagement
                 if(messageBoxResult == System.Windows.MessageBoxResult.OK)
                 {
                     OpenLogDirectory();
+                    if (OCRHelper.IsPaddleOcrEngineReady)
+                    {
+                        OCRHelper.engine.Dispose();
+                        OCRHelper.client.Dispose();
+                    }// 把 Paddle 杀掉
                     Environment.Exit(1); // 退出应用程序
                 }
             });

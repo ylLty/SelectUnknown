@@ -721,7 +721,6 @@ namespace SelectUnknown
     }
     public class AppUpdateInfo
     {
-        // 属性名与 JSON 键名一致时会自动匹配
         public string Version { get; set; }
         public int VersionCode { get; set; }
         public string ReleaseSummary { get; set; }
