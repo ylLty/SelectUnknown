@@ -16,12 +16,12 @@ A Windows “select to search” tool integrating [Visual Search](#visualSearch)
 # Table of Contents
 </div>
 
-- [Features Overview](#Features Overview)
-- [Screenshots](#Screenshots)
-- [Quick Start](#Quick Start)
-- [Build Guide](#Build Guide)
-- [Additional Notes](#Additional Notes)
-- [Sponsor Development](#Sponsor Development)
+- [Features Overview](#features-overview)
+- [Screenshots](#screenshots)
+- [Quick Start](#quick-start)
+- [Build Guide](#build-guide)
+- [Additional Notes](#additional-notes)
+- [Sponsor Development](#sponsor-development)
 
 <div align="center">
 
