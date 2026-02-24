@@ -110,7 +110,19 @@
 
 如果你觉得我的软件好用，请给我一杯咖啡
 
-允许通过爱发电赞助开发者
+可通过下列两种方式赞助
+
+### 1、通过微信支付或支付宝赞助
+
+<img src="https://github.com/ylLty/SelectUnknown/blob/master/docs/donate-by-alipay.webp?raw=true" width="700" /> <img src="https://github.com/ylLty/SelectUnknown/blob/master/docs/donate-by-wechat.webp?raw=true" width="700" />
+
+请备注`赞助 Select Unknown - [你的github ID]`。所有赞助者都将公布于[此名单](https://github.com/ylLty/SelectUnknown/blob/master/docs/list-of-Sponsors.md)！(没有Github账号可以填写昵称)
+
+若你想匿名赞助，请填写备注`赞助 Select Unknown`但不备注你的信息，**否则我无法判断收款码收款意图！将不会纳入赞助名单！**
+
+**暂不支持退款**。
+
+### 2、通过爱发电赞助开发者
 
 [点击这里](https://afdian.com/a/yl_lty)打开爱发电赞助页面
 
