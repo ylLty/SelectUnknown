@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelectUnknown", "SelectUnkn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSelectUnknown", "..\TestSelectUnknown\TestSelectUnknown.csproj", "{2E6BAC00-9C0F-419F-953D-2D1DABF770F3}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SelectUnknownSetup", "SelectUnknownSetup\SelectUnknownSetup.vdproj", "{42E31DFF-16AF-C12A-0948-12C5FF26216E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,8 @@ Global
 		{2E6BAC00-9C0F-419F-953D-2D1DABF770F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2E6BAC00-9C0F-419F-953D-2D1DABF770F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E6BAC00-9C0F-419F-953D-2D1DABF770F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42E31DFF-16AF-C12A-0948-12C5FF26216E}.Debug|Any CPU.ActiveCfg = Debug
+		{42E31DFF-16AF-C12A-0948-12C5FF26216E}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
