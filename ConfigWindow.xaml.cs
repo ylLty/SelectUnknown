@@ -1,4 +1,5 @@
-﻿using SelectUnknown.HotKeyMan;
+﻿using SelectUnknown.ConfigManagment;
+using SelectUnknown.HotKeyMan;
 using SelectUnknown.Pages;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,26 @@ namespace SelectUnknown
 
             this.Closing += ConfigWindow_Closing;
         }
+        public static void Refresh()
+        {
+            GeneralPage.Instance.IsStartUp.IsChecked = StartupManager.IsStartupEnabled(Main.APP_NAME);
+            GeneralPage.Instance.SilentStart.IsChecked = Config.curConfig.SilentStart;
+            GeneralPage.Instance.AutoCheckUpdate.IsChecked = Config.curConfig.AutoCheckUpdate;
+            GeneralPage.Instance.OldLogDeleteDays.Text = Config.curConfig.OldLogDeleteDays.ToString();
+            GeneralPage.Instance.ScreenshotPath.Text = Config.curConfig.ScreenshotFolderPath;
+
+            HotkeyPage.Instance.StartHotKey = $"{string.Join("+", Config.curConfig.StartModifierKeys)} + {Config.curConfig.StartKey}";
+            HotkeyPage.Instance.StartKeyInput.Text = HotkeyPage.Instance.StartHotKey;
+            HotkeyPage.Instance.ScreenshotHotKey = $"{string.Join("+", Config.curConfig.ScreenshotModifierKeys)} + {Config.curConfig.ScreenshotKey}";
+            HotkeyPage.Instance.ScreenshotKeyInput.Text = HotkeyPage.Instance.ScreenshotHotKey;
+
+            ServicePage.Instance.SearchEngineSelect.Text = Config.curConfig.SearchEngineName;
+            ServicePage.Instance.SearchEngineSelect.SelectedItem = Config.curConfig.SearchEngineName;
+            ServicePage.Instance.UsingAndroidUserAgentCheck.IsChecked = Config.curConfig.UsingAndroidUserAgent;
+            ServicePage.Instance.LensEngineSelect.Text = Config.curConfig.LensEngineName;
+            ServicePage.Instance.TranslateEngineSelect.Text = Config.curConfig.TranslateEngineName;
+            ServicePage.Instance.OcrEngineSelect.Text = Config.curConfig.OcrEngineName;
+        }
         /// <summary>
         /// 监听窗口鼠标点击事件用于自动保存
         /// </summary>
@@ -65,6 +86,7 @@ namespace SelectUnknown
                 ConfigManagment.ConfigManager.ReadConfig();
                 //HotKeyHelper.SetScreenshotHotKey();
             });
+            Refresh();
         }
 
         private void ConfigWindow_Closing(object? sender, CancelEventArgs e)
@@ -101,7 +123,7 @@ namespace SelectUnknown
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ConfigManagment.Config.AutoCheckUpdate)
+            if (Config.curConfig.AutoCheckUpdate)
                 Task.Run(() => Main.CheckUpdate());
         }
     }

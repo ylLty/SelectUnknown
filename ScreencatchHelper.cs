@@ -25,7 +25,7 @@ namespace SelectUnknown
         public static string GetScreenshotFolderPath()
         {
             string directory;
-            if (string.IsNullOrWhiteSpace(Config.ScreenshotFolderPath))
+            if (string.IsNullOrWhiteSpace(Config.curConfig.ScreenshotFolderPath))
             {
                 // 留了空，自动获取图片文件夹路径
                 directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "SelectUnknownScreenshots");
@@ -37,13 +37,13 @@ namespace SelectUnknown
             }
             else
             {
-                if (!Main.IsPathValid(Config.ScreenshotFolderPath))
+                if (!Main.IsPathValid(Config.curConfig.ScreenshotFolderPath))
                 {
                     System.Windows.MessageBox.Show("截图保存路径无效，请重新配置\n（图片已暂存至日志文件夹，请在 关于软件 - 查看日志 找到图片文件）", Main.APP_NAME, MessageBoxButton.OK, MessageBoxImage.Warning);
-                    LogHelper.Log($"截图文件夹路径无效，需重新配置({Config.ScreenshotFolderPath})图片已暂存至日志文件夹", LogLevel.Warn);
+                    LogHelper.Log($"截图文件夹路径无效，需重新配置({Config.curConfig.ScreenshotFolderPath})图片已暂存至日志文件夹", LogLevel.Warn);
                     return LogHelper.GetLogPath();
                 }
-                return Path.GetFullPath(Config.ScreenshotFolderPath);
+                return Path.GetFullPath(Config.curConfig.ScreenshotFolderPath);
             }
         }
         public static string GetScreenshotFilePath()

@@ -31,20 +31,21 @@ namespace SelectUnknown.Pages
         public ServicePage()
         {
             InitializeComponent();
-            SearchEngineSelect.Text = Config.SearchEngineName;
-            SearchEngineSelect.SelectedItem = Config.SearchEngineName;
-            UsingAndroidUserAgentCheck.IsChecked = Config.UsingAndroidUserAgent;
-            LensEngineSelect.Text = Config.LensEngineName;
-            OcrEngineSelect.Text = Config.OcrEngineName;
+            SearchEngineSelect.Text = Config.curConfig.SearchEngineName;
+            SearchEngineSelect.SelectedItem = Config.curConfig.SearchEngineName;
+            UsingAndroidUserAgentCheck.IsChecked = Config.curConfig.UsingAndroidUserAgent;
+            LensEngineSelect.Text = Config.curConfig.LensEngineName;
+            TranslateEngineSelect.Text = Config.curConfig.TranslateEngineName;
+            OcrEngineSelect.Text = Config.curConfig.OcrEngineName;
         }
 
         private void SearchEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SearchEngineSelect.SelectedItem == null) return;
             string result = SearchEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
-            Config.SearchEngineName = result;
+            Config.curConfig.SearchEngineName = result;
             ConfigManager.SaveConfig();
-            if (result == "夸克" && Config.UsingAndroidUserAgent == true)
+            if (result == "夸克" && Config.curConfig.UsingAndroidUserAgent == true)
             {
                 Main.PopupMessageOnConfigWindow("启用安卓用户代理后，夸克\n搜索引擎可能无法正常使用。");
             }
@@ -52,14 +53,14 @@ namespace SelectUnknown.Pages
 
         private void UsingAndroidUserAgentCheck_Checked(object sender, RoutedEventArgs e)
         {
-            Config.UsingAndroidUserAgent = true;
+            Config.curConfig.UsingAndroidUserAgent = true;
             if (SearchEngineSelect.SelectedItem == null) return;
             string result = SearchEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
             if (result == "夸克")
             {
                 Main.PopupMessageOnConfigWindow("启用安卓用户代理后，夸克\n搜索引擎可能无法正常使用。");
             }
-            if (Config.LensEngineName=="百度")
+            if (Config.curConfig.LensEngineName=="百度")
             {
                 Main.PopupMessageOnConfigWindow("当前识图引擎不能\n使用安卓 UA 标识");
             }
@@ -67,19 +68,19 @@ namespace SelectUnknown.Pages
 
         private void UsingAndroidUserAgentCheck_Unchecked(object sender, RoutedEventArgs e)
         {
-            Config.UsingAndroidUserAgent = false;
+            Config.curConfig.UsingAndroidUserAgent = false;
         }
 
         private void LensEngineSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (LensEngineSelect.SelectedItem == null) return;
             string result = LensEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
-            Config.LensEngineName = result;
+            Config.curConfig.LensEngineName = result;
             ConfigManager.SaveConfig();
             if (result == "百度")
             {
                 Main.PopupMessageOnConfigWindow("此识图引擎需要手动粘贴");
-                if (Config.UsingAndroidUserAgent)
+                if (Config.curConfig.UsingAndroidUserAgent)
                 {
                     Main.PopupMessageOnConfigWindow("此识图引擎不能\n使用安卓 UA 标识");
                 }
@@ -90,7 +91,7 @@ namespace SelectUnknown.Pages
         {
             if (TranslateEngineSelect.SelectedItem == null) return;
             string result = TranslateEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
-            Config.TranslateEngineName = result;
+            Config.curConfig.TranslateEngineName = result;
             ConfigManager.SaveConfig();
         }
 
@@ -100,8 +101,14 @@ namespace SelectUnknown.Pages
             string result = OcrEngineSelect.SelectedItem.ToString().Split(':')[1].Trim();
 
 
-            Config.OcrEngineName = result;
+            Config.curConfig.OcrEngineName = result;
             ConfigManager.SaveConfig();
+            if(result == "Windows 内置" && OCRHelper.IsPaddleOcrEngineReady)
+            {
+                OCRHelper.Dispose();
+
+				LogHelper.Log("切换成了 Windows 内置 OCR 已关闭 PaddleOCR-json");
+            }
             if (OCRHelper.IsPaddleOcrEngineReady && result == "PaddleOCR-json") return;
 
             while (true)
@@ -132,7 +139,7 @@ namespace SelectUnknown.Pages
                         }
                         OcrEngineSelect.Text = "Windows 内置";// 回退到 Windows 内置 OCR 引擎
                         OcrEngineSelect.SelectedIndex = 0;
-                        Config.OcrEngineName = "Windows 内置";
+                        Config.curConfig.OcrEngineName = "Windows 内置";
                         continue;
                     }
                     LogHelper.Log($"OCR 引擎初始化失败，异常信息: {ex}", LogLevel.Error);

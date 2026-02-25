@@ -29,7 +29,7 @@ namespace SelectUnknown.HotKeyMan
         {
             // 解析配置中的修饰键数组
             ModifierKeys combined = ModifierKeys.None;
-            foreach (var modifier in Config.StartModifierKeys)
+            foreach (var modifier in Config.curConfig.StartModifierKeys)
             {
                 combined |= modifier;
             }
@@ -41,12 +41,12 @@ namespace SelectUnknown.HotKeyMan
             }
             try
             {
-                startKey = startHotkey.Register(Config.StartKey, combined);
+                startKey = startHotkey.Register(Config.curConfig.StartKey, combined);
             }
             catch (Exception ex)
             {
-                LogHelper.Log($"框定即搜热键注册失败{combined} + {Config.StartKey}，可能是因为热键冲突或无效。请检查配置并重试。"+ex, LogLevel.Error);
-                MessageBox.Show($"框定即搜热键注册失败{combined} + {Config.StartKey}，可能是因为热键冲突或无效。请检查配置并重试。", "热键注册错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogHelper.Log($"框定即搜热键注册失败{combined} + {Config.curConfig.StartKey}，可能是因为热键冲突或无效。请检查配置并重试。"+ex, LogLevel.Error);
+                MessageBox.Show($"框定即搜热键注册失败{combined} + {Config.curConfig.StartKey}，可能是因为热键冲突或无效。请检查配置并重试。", "热键注册错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return -1;
             }
             startHotkey.KeyPressed += StartHotkeyPressed;
@@ -72,7 +72,7 @@ namespace SelectUnknown.HotKeyMan
             ConfigManager.ReadConfig();
             // 解析配置中的修饰键数组
             ModifierKeys combined = ModifierKeys.None;
-            foreach (var modifier in Config.ScreenshotModifierKeys)
+            foreach (var modifier in Config.curConfig.ScreenshotModifierKeys)
             {
                 combined |= modifier;
             }
@@ -84,12 +84,12 @@ namespace SelectUnknown.HotKeyMan
             }
             try
             {
-                screenshotKey = screenshotHotkey.Register(Config.ScreenshotKey, combined);
+                screenshotKey = screenshotHotkey.Register(Config.curConfig.ScreenshotKey, combined);
             }
             catch (Exception ex)
             {
-                LogHelper.Log($"截图热键注册失败{combined} + {Config.ScreenshotKey}，可能是因为热键冲突或无效。请检查配置并重试。"+ex.ToString(), LogLevel.Error);
-                MessageBox.Show($"截图热键注册失败{combined} + {Config.ScreenshotKey}，可能是因为热键冲突或无效。请检查配置并重试。", "热键注册错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogHelper.Log($"截图热键注册失败{combined} + {Config.curConfig.ScreenshotKey}，可能是因为热键冲突或无效。请检查配置并重试。"+ex.ToString(), LogLevel.Error);
+                MessageBox.Show($"截图热键注册失败{combined} + {Config.curConfig.ScreenshotKey}，可能是因为热键冲突或无效。请检查配置并重试。", "热键注册错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return -1;
             }
             screenshotHotkey.KeyPressed += ScreenshotHotkeyPressed;

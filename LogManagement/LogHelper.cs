@@ -135,11 +135,8 @@ namespace SelectUnknown.LogManagement
                 if(messageBoxResult == System.Windows.MessageBoxResult.OK)
                 {
                     OpenLogDirectory();
-                    if (OCRHelper.IsPaddleOcrEngineReady)
-                    {
-                        OCRHelper.engine.Dispose();
-                        OCRHelper.client.Dispose();
-                    }// 把 Paddle 杀掉
+                    OCRHelper.Dispose();// 把 Paddle 杀掉
+                    
                     Environment.Exit(1); // 退出应用程序
                 }
             });

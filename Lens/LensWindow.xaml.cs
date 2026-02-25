@@ -123,13 +123,13 @@ namespace SelectUnknown
 
             ShowLensControls(300);
             await webView.EnsureCoreWebView2Async();
-            if (ConfigManagment.Config.UsingAndroidUserAgent)
+            if (Config.curConfig.UsingAndroidUserAgent)
             {
                 webView.CoreWebView2.Settings.UserAgent = Main.GetWebViewUserAgent();//设置为安卓 UA
                 LogHelper.Log("已设置 WebView2 使用安卓用户代理");
             }
             SelectRectangle_Click(sender, e);
-            if (Config.AutoCheckUpdate)
+            if (Config.curConfig.AutoCheckUpdate)
                 Task.Run(() => Main.CheckUpdate(false));
             try
             {
@@ -540,7 +540,7 @@ namespace SelectUnknown
         {
             Loading.Visibility = Visibility.Visible;
             string imageUrl = "无";
-            if (!(Config.LensEngineName == "百度" || Config.LensEngineName == "Bing"))
+            if (!(Config.curConfig.LensEngineName == "百度" || Config.curConfig.LensEngineName == "Bing"))
             {
                 if( (DateTime.Now - failTime).TotalSeconds >= 40)// 40s 冷却
                 {
@@ -570,7 +570,7 @@ namespace SelectUnknown
             webView.CoreWebView2.Navigate(currentLensUrl);
             isLensSearching = true;
             lensTimes = navigationTimes;
-            LogHelper.Log($"用户完成了一次框选并上传至 {Config.LensEngineName} 进行分析");
+            LogHelper.Log($"用户完成了一次框选并上传至 {Config.curConfig.LensEngineName} 进行分析");
             
         }
         private Bitmap GetSelectedImg()

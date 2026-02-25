@@ -84,11 +84,7 @@ public static class TrayHelper
     private static void ExitMenuItemClick(object? sender, EventArgs e)
     {
         Cleanup();
-        if (OCRHelper.IsPaddleOcrEngineReady)
-        {
-            OCRHelper.engine.Dispose();
-            OCRHelper.client.Dispose();
-        }
+        OCRHelper.Dispose();
         LogHelper.Log("托盘图标及文字识别引擎已被清理，应用程序即将退出", LogLevel.Info);
         
         Environment.Exit(0);  // 退出应用程序

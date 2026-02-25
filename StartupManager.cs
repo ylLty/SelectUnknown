@@ -17,7 +17,7 @@ public class StartupManager
     {
         try
         {
-            string silentMode =  Config.SilentStart? " --silent" : "";
+            string silentMode =  Config.curConfig.SilentStart? " --silent" : "";
             // 获取当前程序路径
             string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 

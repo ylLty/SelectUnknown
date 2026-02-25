@@ -453,7 +453,7 @@ namespace SelectUnknown
         /// </summary>
         public static string GetSEHomeUrl()
         {
-            switch (Config.SearchEngineName)
+            switch (Config.curConfig.SearchEngineName)
             {
                 case "Google":
                     return "https://www.google.com/";
@@ -482,7 +482,7 @@ namespace SelectUnknown
         public static string GetSESearchingUrl(string searchingText)
         {
             searchingText = System.Net.WebUtility.UrlEncode(searchingText);// URL 编码，确保特殊字符不会破坏链接结构
-            switch (Config.SearchEngineName)
+            switch (Config.curConfig.SearchEngineName)
             {//{searchingText} 直接放浏览器里面搜索这个就行了
                 case "Google":
                     return $"https://www.google.com/search?q={searchingText}";
@@ -508,7 +508,7 @@ namespace SelectUnknown
         {
             if (string.IsNullOrEmpty(imageUrl) || imageUrl == "无")
             {
-                switch (Config.LensEngineName)// 上传失败处理
+                switch (Config.curConfig.LensEngineName)// 上传失败处理
                 {
                     case "Yandex":
                         return $"https://yandex.com/images/search?rpt=imageview&url=";
@@ -522,7 +522,7 @@ namespace SelectUnknown
                         return $"https://lens.google.com/uploadbyurl?url={imageUrl}";//默认 Google
                 }
             }
-            switch (Config.LensEngineName)
+            switch (Config.curConfig.LensEngineName)
             {
                 case "Yandex":
                     return $"https://yandex.com/images/search?rpt=imageview&url={imageUrl}";
@@ -539,7 +539,7 @@ namespace SelectUnknown
         public static string GetTranslateEngineUrl(string text)
         {
             text = System.Net.WebUtility.UrlEncode(text);
-            switch (Config.TranslateEngineName)
+            switch (Config.curConfig.TranslateEngineName)
             {
                 case "Google":
                     return $"https://translate.google.com/?sl=auto&tl=zh-CN&text={text}&op=translate";
@@ -640,8 +640,8 @@ namespace SelectUnknown
             ConfigManager.InitConfig();
             LogHelper.Log("配置加载成功!");
 
-            LogHelper.Log($"{Config.OldLogDeleteDays}天前的旧日志即将被清理");
-            LogHelper.CleanOldLog(Config.OldLogDeleteDays, LogHelper.logPath);
+            LogHelper.Log($"{Config.curConfig.OldLogDeleteDays}天前的旧日志即将被清理");
+            LogHelper.CleanOldLog(Config.curConfig.OldLogDeleteDays, LogHelper.logPath);
 
             TrayHelper.InitTray("Select Unknown", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res", "logo.ico"));
             LogHelper.Log("托盘初始化成功!");

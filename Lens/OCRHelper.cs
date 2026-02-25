@@ -53,14 +53,9 @@ namespace SelectUnknown.Lens
                 return;
             }
             //====
-            if (Config.OcrEngineName != "PaddleOCR-json")
+            if (Config.curConfig.OcrEngineName != "PaddleOCR-json")
             {
-                if (IsPaddleOcrEngineReady)
-                { 
-                    engine.Dispose();
-                    client.Dispose();
-                    IsPaddleOcrEngineReady = false;
-                }
+                Dispose();
                 LogHelper.Log("使用系统内置 OCR 引擎, 无需初始化");
                 return;
             }
@@ -92,13 +87,22 @@ namespace SelectUnknown.Lens
             LogHelper.Log("PaddleOCR-json 引擎启动成功");
             IsPaddleOcrEngineReady = true;
         }
-        
+        public static void Dispose()
+        {
+            if (IsPaddleOcrEngineReady)
+            {
+                engine.Dispose();
+                client.Dispose();
+                IsPaddleOcrEngineReady = false;
+                LogHelper.Log("PaddleOCR-json 已被关闭");
+            }
+        }
         public static async Task<string> RecognizeAsync(Bitmap bitmap)
         {
             string tmpFolderPath;
             string tmpPath;
             string txt;
-            if (Config.OcrEngineName == "PaddleOCR-json")
+            if (Config.curConfig.OcrEngineName == "PaddleOCR-json")
             {
                 // PaddleOCR-json 引擎逻辑
                 tmpFolderPath = Path.Combine(Path.GetTempPath(), "SelectUnknown", "tmp");

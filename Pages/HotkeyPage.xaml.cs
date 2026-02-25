@@ -54,14 +54,14 @@ namespace SelectUnknown.Pages
             Key key = e.Key;
 
             // 更新 Config 中的截图快捷键设置
-            Config.StartModifierKeys = modifiers.ToString()
+            Config.curConfig.StartModifierKeys = modifiers.ToString()
                                                      .Split(',')
                                                      .Select(m => (ModifierKeys)Enum.Parse(typeof(ModifierKeys), m.Trim()))
                                                      .ToArray();
-            Config.StartKey = e.Key;
+            Config.curConfig.StartKey = e.Key;
 
-            // 格式化截图快捷键字符串
-            StartHotKey = $"{string.Join("+", Config.StartModifierKeys)}+{Config.StartKey}";
+            // 格式化启动快捷键字符串
+            StartHotKey = $"{string.Join("+", Config.curConfig.StartModifierKeys)}+{Config.curConfig.StartKey}";
             StartKeyInput.Text = StartHotKey;
             ConfigManager.SaveConfig();
             //HotKeyHelper.SetStartHotKey();
@@ -77,14 +77,14 @@ namespace SelectUnknown.Pages
             Key key = e.Key;
 
             // 更新 Config 中的截图快捷键设置
-            Config.ScreenshotModifierKeys = modifiers.ToString()
+            Config.curConfig.ScreenshotModifierKeys = modifiers.ToString()
                                                      .Split(',')
                                                      .Select(m => (ModifierKeys)Enum.Parse(typeof(ModifierKeys), m.Trim()))
                                                      .ToArray();
-            Config.ScreenshotKey = e.Key;
+            Config.curConfig.ScreenshotKey = e.Key;
 
             // 格式化截图快捷键字符串
-            ScreenshotHotKey = $"{string.Join("+", Config.ScreenshotModifierKeys)}+{Config.ScreenshotKey}";
+            ScreenshotHotKey = $"{string.Join("+", Config.curConfig.ScreenshotModifierKeys)}+{Config.curConfig.ScreenshotKey}";
             ScreenshotKeyInput.Text = ScreenshotHotKey;
             ConfigManager.SaveConfig();
             //HotKeyHelper.SetScreenshotHotKey();
@@ -96,10 +96,10 @@ namespace SelectUnknown.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // 显示当前的快捷键配置
-            StartHotKey = $"{string.Join("+", Config.StartModifierKeys)}+{Config.StartKey}";
+            StartHotKey = $"{string.Join("+", Config.curConfig.StartModifierKeys)} + {Config.curConfig.StartKey}";
             StartKeyInput.Text = StartHotKey;
 
-            ScreenshotHotKey = $"{string.Join("+", Config.ScreenshotModifierKeys)}+{Config.ScreenshotKey}";
+            ScreenshotHotKey = $"{string.Join("+", Config.curConfig.ScreenshotModifierKeys)} + {Config.curConfig.ScreenshotKey}";
             ScreenshotKeyInput.Text = ScreenshotHotKey;
         }
     }
