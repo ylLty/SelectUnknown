@@ -18,15 +18,20 @@
 
 	<PlatformTarget>AnyCPU</PlatformTarget>
 
-	<FileVersion>1.1.0</FileVersion>
+	<FileVersion>1.2.0.0</FileVersion>
 
-	<AssemblyVersion>1.1.0</AssemblyVersion>
+	<AssemblyVersion>1.2.0.0</AssemblyVersion>
 
 	<Copyright>Copyright © 2026 yl_lty</Copyright>
 
 	<ApplicationIcon>res\logo.ico</ApplicationIcon>
 
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+	<PackageReleaseNotes>添加新的搜索引擎 DuckDuckGo
+重写配置管理代码
+修复了二维码识别时关闭窗口导致的软件崩溃问题
+其他优化</PackageReleaseNotes>
   </PropertyGroup>
 
   <!--<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

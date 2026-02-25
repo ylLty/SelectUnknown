@@ -47,7 +47,7 @@ namespace SelectUnknown
         public static string APP_NAME => GetAssemblyTitle();
         public static string APP_VERSION => GetInformationalVersion();
 
-        public const int VERSION_CODE = 1;
+        public const int VERSION_CODE = 2;
         public static string COPYRIGHT_INFO => GetCopyright();
         public static string GetCopyright()
         {
@@ -286,7 +286,7 @@ namespace SelectUnknown
             if (info.VersionCode > VERSION_CODE)
             {
                 LogHelper.Log($"检查更新结果：发现新版本 {info.Version} (VersionCode: {info.VersionCode})，更新内容: {info.ReleaseSummary}");
-                DialogResult messageBoxButton = MessageBox.Show($"发现新版本 {info.Version}！\n\n更新内容：{info.ReleaseSummary}\n\n点击确定前往下载页面", "发现新版本！", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                DialogResult messageBoxButton = MessageBox.Show($"发现新版本 {info.Version}！\n\n更新内容：\n{info.ReleaseSummary}\n\n点击确定前往下载页面", "发现新版本！", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                 if (messageBoxButton == DialogResult.OK)
                 {
                     OpenUrl(info.DownLoadUrl);
