@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Reflection;
 using System.IO;
 using SelectUnknown.LogManagement;
+using System.Windows;
 
 namespace SelectUnknown.ConfigManagment
 {
@@ -62,6 +63,8 @@ namespace SelectUnknown.ConfigManagment
             catch (Exception ex)
             {
                 ResetConfig();
+                System.Windows.Forms.Clipboard.SetText(jsonString);
+                System.Windows.Forms.MessageBox.Show($"配置文件读取失败，因为 Json 文件存在问题，已为您重置配置\n错误的文本已复制到剪切板，以便您恢复原有配置：\n{jsonString}", "配置加载出错",MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogHelper.Log($"配置文件读取失败，已重置\n错误信息：\n{ex}\n错误的 json 文本：\n{jsonString}", LogLevel.Warn);
             }
         }
