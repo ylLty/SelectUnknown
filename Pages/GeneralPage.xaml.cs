@@ -126,7 +126,7 @@ namespace SelectUnknown.Pages
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            if (System.Windows.MessageBox.Show("确定要重置所有配置吗？", "二次确认", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (System.Windows.MessageBox.Show("确定要重置所有配置吗？", "二次确认", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 ConfigManager.ResetConfig();
             }

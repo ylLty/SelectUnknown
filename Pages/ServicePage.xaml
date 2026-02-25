@@ -20,6 +20,7 @@
                         <ComboBoxItem Content="Google"></ComboBoxItem>
                         <ComboBoxItem Content="Bing (海外版)"></ComboBoxItem>
                         <ComboBoxItem Content="必应"></ComboBoxItem>
+                        <ComboBoxItem Content="DuckDuckGo"></ComboBoxItem>
                         <ComboBoxItem Content="百度"></ComboBoxItem>
                         <ComboBoxItem Content="Yandex"></ComboBoxItem>
                         <ComboBoxItem Content="夸克"></ComboBoxItem>

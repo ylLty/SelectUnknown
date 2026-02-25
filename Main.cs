@@ -463,6 +463,8 @@ namespace SelectUnknown
                     return "https://www.bing.com/";//需要挂全局梯子，否则会重定向到必应中国（Edge 浏览器还会识别浏览器配置）
                 case "必应":
                     return "https://cn.bing.com/";
+                case "DuckDuckGo":
+                    return "https://duckduckgo.com/";
                 case "百度":
                     return "https://www.baidu.com/";
                 case "Yandex":
@@ -490,6 +492,8 @@ namespace SelectUnknown
                     return $"https://www.bing.com/search?q={searchingText}";//需要挂全局梯子，否则会重定向到必应中国（Edge 浏览器还会识别浏览器配置）
                 case "必应":
                     return $"https://cn.bing.com/search?q={searchingText}";
+                case "DuckDuckGo":
+                    return $"https://duckduckgo.com/?q={searchingText}";
                 case "百度":
                     return $"https://www.baidu.com/s?wd={searchingText}";
                 case "Yandex":
@@ -504,7 +508,7 @@ namespace SelectUnknown
         {
             if (string.IsNullOrEmpty(imageUrl) || imageUrl == "无")
             {
-                switch (Config.LensEngineName)
+                switch (Config.LensEngineName)// 上传失败处理
                 {
                     case "Yandex":
                         return $"https://yandex.com/images/search?rpt=imageview&url=";
