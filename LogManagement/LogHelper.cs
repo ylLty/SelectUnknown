@@ -40,7 +40,10 @@ namespace SelectUnknown.LogManagement
         public static void Log(string info, LogLevel level = LogLevel.Info)
         {
             string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss:fff}] [{level}] {info}";
-            
+            if (!Directory.Exists(logPath))
+            {
+                Directory.CreateDirectory(logPath);
+            }//我怎么能忘了创建目录....
             // 如果文件不存在，创建文件
             if (!File.Exists(logFilePath))
             {
