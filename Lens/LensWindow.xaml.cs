@@ -139,6 +139,7 @@ namespace SelectUnknown
             BrowserDrag.MouseDown -= Border_MouseDown_1;
             BrowserDrag.MouseMove -= Border_MouseMove_2;
             BrowserDrag.MouseUp -= Border_MouseUp_1;
+            this.Unloaded -= Window_Loaded;
 
             closed = true;// 不这样做会导致再被调用一次,“鞭尸”会导致软件崩溃
             this.Close();

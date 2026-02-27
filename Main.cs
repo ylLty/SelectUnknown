@@ -47,7 +47,7 @@ namespace SelectUnknown
         public static string APP_NAME => GetAssemblyTitle();
         public static string APP_VERSION => GetInformationalVersion();
 
-        public const int VERSION_CODE = 2;
+        public const int VERSION_CODE = 3;
         public static string COPYRIGHT_INFO => GetCopyright();
         public static string GetCopyright()
         {

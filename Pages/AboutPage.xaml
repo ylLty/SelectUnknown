@@ -9,11 +9,11 @@
       Title="AboutPage"
       Background="#FFFFDEED">
     <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
-        <Grid>
+        <Grid Cursor="">
             <StackPanel>
-                <Image Source="pack://siteoforigin:,,,/res/load-window.png" Width="730" HorizontalAlignment="Center" Stretch="Uniform"/>
+                <Image Source="pack://siteoforigin:,,,/res/load-window.png" Width="730" Height="350" HorizontalAlignment="Center" Stretch="UniformToFill"/>
                 <TextBlock Name="AppName" Text="Select Unknown" FontSize="36" FontWeight="Bold" Foreground="#FF333333" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                <TextBlock Name="Version" Text="版本: 1.0.0" FontSize="18" Foreground="#FF555555" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Name="Version" Text="版本: 1.0.0 (1)" FontSize="18" Foreground="#FF555555" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                 <TextBlock Name="Copyright" Text="Copyright" FontSize="16" Foreground="#FF555555" HorizontalAlignment="Center"/>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Cursor="">
@@ -21,7 +21,11 @@
                     <Button Name="VisitGithub" Click="VisitGithub_Click" Content="GitHub" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
                     <Button Name="VisitOpenSourceLicense" Click="VisitOpenSourceLicense_Click" Content="开源许可" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
                     <Button Name="Feedback" Click="Feedback_Click" Content="问题反馈" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Cursor="">
                     <Button Name="ViewLogs" Click="ViewLogs_Click" Content="查看日志" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                    <Button Name="OpenRootDir" Click="OpenRootDir_Click" Content="安装目录" ToolTip="在资源管理器中显示安装目录" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
+                    <Button Name="OpenConfig" Click="OpenConfig_Click" Content="查看配置" ToolTip="在资源管理器中显示配置文件" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
                     <Button Name="CheckUpdate" Click="CheckUpdate_Click" Content="检查更新" Background="#FFE89ABD" Margin="8" BorderBrush="#FFE89ABD"></Button>
                 </StackPanel>
             </StackPanel>

@@ -18,9 +18,9 @@
 
 	<PlatformTarget>AnyCPU</PlatformTarget>
 
-	<FileVersion>1.2.0.0</FileVersion>
+	<FileVersion>1.2.1.0</FileVersion>
 
-	<AssemblyVersion>1.2.0.0</AssemblyVersion>
+	<AssemblyVersion>1.2.1.0</AssemblyVersion>
 
 	<Copyright>Copyright © 2026 yl_lty</Copyright>
 
@@ -28,10 +28,9 @@
 
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-	<PackageReleaseNotes>添加新的搜索引擎 DuckDuckGo
-重写配置管理代码
-修复了二维码识别时关闭窗口导致的软件崩溃问题
-其他优化</PackageReleaseNotes>
+	<PackageReleaseNotes>修改关于页面，添加导航到配置文件及安装目录功能
+修复了运行时删除 日志文件文件夹 引发的崩溃问题
+优化了框索未知窗口的资源释放</PackageReleaseNotes>
   </PropertyGroup>
 
   <!--<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

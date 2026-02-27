@@ -1,6 +1,7 @@
 ﻿using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace SelectUnknown.Pages
         public AboutPage()
         {
             InitializeComponent();
-            Version.Text = "版本号: " + Main.APP_VERSION;
+            Version.Text = "版本号: " + Main.APP_VERSION + " (" + Main.VERSION_CODE + ") ";
             Copyright.Text = Main.COPYRIGHT_INFO;
         }
 
@@ -63,6 +64,18 @@ namespace SelectUnknown.Pages
         {
             LogHelper.Log("用户通过关于页面查看了开源许可证", LogLevel.Info);
             Main.OpenUrl("https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/docs/open-source-license.txt");
+        }
+
+        private void OpenRootDir_Click(object sender, RoutedEventArgs e)
+        {
+            LogHelper.Log("用户通过关于页面查看软件根目录", LogLevel.Info);
+            Process.Start("explorer.exe", $"\"{AppDomain.CurrentDomain.BaseDirectory}\"");
+        }
+
+        private void OpenConfig_Click(object sender, RoutedEventArgs e)
+        {
+            LogHelper.Log("用户通过关于页面查看配置文件", LogLevel.Info);
+            Process.Start("explorer.exe", $"/select,\"{ConfigManagment.ConfigManager.ConfigFilePath}\"");
         }
     }
 }
