@@ -108,6 +108,37 @@ namespace SelectUnknown
                 webView.CoreWebView2.NewWindowRequested -= webView_NewWindowRequested;
             }
             TakeColor.Click -= TakeColor_Click;
+            ScreenImage.MouseLeftButtonDown -= StartSelectRectangle;
+            ScreenImage.MouseMove -= MovingSelectRectangle;
+            ScreenImage.MouseLeftButtonUp -= EndSelectRectangle;
+            SelectionCanvas.MouseLeftButtonDown -= StartSelectRectangle;
+            SelectionCanvas.MouseMove -= MovingSelectRectangle;
+            SelectionCanvas.MouseLeftButtonUp -= EndSelectRectangle;
+            ScreenImage.MouseRightButtonUp -= ScreenImage_MouseRightButtonUp;
+            SelectionCanvas.MouseRightButtonUp -= SelectionCanvas_MouseRightButtonUp;
+            AutoSele.Click -= AutoSele_Click;
+            TextOnly.Click -= TextOnly_Click;
+            ImgOnly.Click -= ImgOnly_Click;
+            TranslateOnly.Click -= TranslateOnly_Click;
+            OcrOnly.Click -= OcrOnly_Click;
+            CopyAllText.Click -= CopyAllText_Click;
+            Translate.Click -= Translate_Click;
+            SearchSelectedText.Click -= SearchSelectedText_Click;
+            MainText.LostFocus -= MainText_LostFocus;
+            SaveScreen.Click -= SaveScreen_Click;
+            HideBackground.Click -= HideBackground_Click;
+            Close.Click -= Close_Click;
+            Settings.Click -= Settings_Click;
+            SaveImg.Click -= SaveImg_Click;
+            BrowserDrag.MouseLeftButtonDown -= Border_MouseLeftButtonDown;
+            BrowserDrag.MouseLeftButtonUp -= Border_MouseLeftButtonUp;
+            BrowserDrag.MouseMove -= Border_MouseMove;
+            BrowserDrag.MouseDown -= Border_MouseDown;
+            BrowserDrag.MouseMove -= Border_MouseMove_1;
+            BrowserDrag.MouseUp -= Border_MouseUp;
+            BrowserDrag.MouseDown -= Border_MouseDown_1;
+            BrowserDrag.MouseMove -= Border_MouseMove_2;
+            BrowserDrag.MouseUp -= Border_MouseUp_1;
 
             closed = true;// 不这样做会导致再被调用一次,“鞭尸”会导致软件崩溃
             this.Close();

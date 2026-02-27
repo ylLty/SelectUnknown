@@ -107,7 +107,7 @@
                 <Grid>
                     <StackPanel Height="60" VerticalAlignment="Top" Orientation="Horizontal">
                         <!--拖拽-->
-                        <Border Background="AliceBlue" Cursor="SizeAll" Width="15" Margin="15,12,0,6" MouseDown="Border_MouseDown" MouseMove="Border_MouseMove_1" MouseUp="Border_MouseUp">
+                        <Border Name="BrowserDrag" Background="AliceBlue" Cursor="SizeAll" Width="15" Margin="15,12,0,6" MouseDown="Border_MouseDown" MouseMove="Border_MouseMove_1" MouseUp="Border_MouseUp">
                             <materialDesign:PackIcon Kind="Drag" VerticalAlignment="Center"/>
                         </Border>
 

@@ -588,7 +588,12 @@ namespace SelectUnknown
         {
             var configWindow = System.Windows.Application.Current.MainWindow;
             configWindow.Show();
+            if (configWindow.WindowState == WindowState.Minimized)
+            {
+                configWindow.WindowState = WindowState.Normal;
+            }
             configWindow.Activate();
+            configWindow.Focus();
         }
         
         #endregion
