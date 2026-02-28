@@ -1,8 +1,7 @@
+<p align="center"><img src="https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/docs/load-window.webp" alt="ShareX Banner" width="800"/></p>
 <div align="center">
 
 简体中文 | [English](https://github.com/ylLty/SelectUnknown/blob/master/docs/README_en.md)
-
-![icon](https://raw.githubusercontent.com/ylLty/SelectUnknown/refs/heads/master/docs/load-window.webp)
 # Select Unknown - 框索未知
 一个集成了[视觉搜索](#visualSearch)、[划词搜索](#textSearch)、[文字识别](#OCR)、[翻译](#translate)、[扫码](#qrcodeScan)、[截图](#screenshot)、[取色](#takeColour)的 Windows 版 “圈定即搜”
 
