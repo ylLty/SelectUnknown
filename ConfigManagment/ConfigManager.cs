@@ -1,12 +1,13 @@
-﻿using System;
+﻿using SelectUnknown.LogManagement;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Reflection;
+using System.Diagnostics;
 using System.IO;
-using SelectUnknown.LogManagement;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace SelectUnknown.ConfigManagment
@@ -16,6 +17,19 @@ namespace SelectUnknown.ConfigManagment
         public static string ConfigFilePath { get; private set; } = GetConfigFilePath();
         public static void InitConfig()
         {
+            string configPath = AppDomain.CurrentDomain.BaseDirectory;
+            if (!HasWritePermission(configPath))
+            {
+                // 如果没有权限，才执行你之前的 EnsureFolderPermissions 逻辑
+                EnsureFolderPermissions(configPath);
+
+                // 执行完提权后，建议再次检查一次，确保用户在 UAC 弹窗点的是“是”
+                if (!HasWritePermission(configPath))
+                {
+                    // 如果依然没权限（用户点了“否”），可以给用户一个友好提示
+                    System.Windows.MessageBox.Show("程序缺少必要的写入权限，配置可能无法保存。");
+                }
+            }
             if (File.Exists(ConfigFilePath))
             {
                 LogHelper.Log("配置文件已存在，跳过创建默认配置文件", LogLevel.Info);
@@ -26,6 +40,58 @@ namespace SelectUnknown.ConfigManagment
                 ResetConfig();
             }
             ReadConfig();
+        }
+        public static bool HasWritePermission(string path)
+        {
+            try
+            {
+                // 如果是文件夹，尝试在其下创建一个临时测试文件
+                string testFile = Path.Combine(path, Guid.NewGuid().ToString() + ".test");
+                using (FileStream fs = File.Create(testFile)) { }
+                File.Delete(testFile); // 成功创建后立即删除
+                return true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false; // 明确捕获权限不足异常
+            }
+            catch (Exception)
+            {
+                return false; // 其他错误（如路径不存在）也返回 false
+            }
+        }
+        public static void EnsureFolderPermissions(string folderPath)
+        {
+            try
+            {
+                // 1. 去掉路径末尾的反斜杠，防止 icacls 路径转义错误
+                string cleanPath = folderPath.TrimEnd('\\');
+
+                // 3. 构建 icacls 命令：/grant Users:(OI)(CI)M
+                // OI: 文件夹及其下的文件; CI: 文件夹及其下的子文件夹; M: 修改权限
+                string arguments = $"/c icacls \"{cleanPath}\" /grant Users:(OI)(CI)M /T";
+
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = arguments,
+                    Verb = "runas",              // 核心：请求管理员权限
+                    UseShellExecute = true,      // 必须为 true 才能触发 UAC
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true
+                };
+
+                using (Process p = Process.Start(psi))
+                {
+                    p.WaitForExit();
+                    if (p.ExitCode != 0) throw new Exception();
+                }
+            }
+            catch (Exception ex)
+            {
+                // 如果用户在 UAC 弹窗点“否”，会抛出 Win32Exception (Access is denied)
+                Console.WriteLine("用户拒绝了提权或发生错误: " + ex.Message);
+            }
         }
         private static string GetConfigFilePath()
         {

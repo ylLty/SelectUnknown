@@ -552,7 +552,7 @@ namespace SelectUnknown
                     }
                     break;
                 case "None":
-                    Clipboard.SetImage(croppedImg);
+                    //Clipboard.SetImage(croppedImg);
                     LogHelper.Log("不进行操作");
                     break;
                 default:
