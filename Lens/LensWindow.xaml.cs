@@ -57,12 +57,67 @@ namespace SelectUnknown
        
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            switch (e.Key) { 
+            // 获取实际按下的键（处理Alt组合键时e.Key会变成Key.System，实际键值在e.SystemKey中）
+            Key pressedKey = e.Key == Key.System ? e.SystemKey : e.Key;
+
+            // 检测 Alt 组合键
+            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                switch (pressedKey)
+                {
+                    case Key.A:
+                        this.AutoSele_Click(null, null);
+                        e.Handled = true;
+                        return; // 直接返回，避免继续执行后面的代码
+                    case Key.T:
+                        this.TextOnly_Click(null, null);
+                        e.Handled = true;
+                        return;
+                    case Key.Q:
+                        this.ImgOnly_Click(null, null);
+                        e.Handled = true;
+                        return;
+                    case Key.Y:
+                        this.TranslateOnly_Click(null, null);
+                        e.Handled = true;
+                        return;
+                    case Key.O:
+                        this.OcrOnly_Click(null, null);
+                        e.Handled = true;
+                        return;
+                    case Key.P:
+                        TakeColor_Click(null, null);
+                        e.Handled = true;
+                        return;
+                    case Key.S:
+                        SaveImg_Click(null, null);
+                        e.Handled = true;
+                        return;
+                }
+            }
+
+            // 检测 Ctrl 组合键
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                switch (pressedKey)
+                {
+                    case Key.S:
+                        SaveScreen_Click(null, null);
+                        e.Handled = true;
+                        return;
+                }
+            }
+
+            // 检测单个按键（没有修饰键的情况）
+            switch (e.Key)
+            {
                 case Key.Escape:
                     ShutdownWindow();
+                    e.Handled = true;
                     break;
                 case Key.Back:
                     HideBackground_Click(sender, e);
+                    e.Handled = true;
                     break;
                 case Key.Tab:
                     if (Browser.Visibility == Visibility.Visible)
@@ -73,6 +128,7 @@ namespace SelectUnknown
                     {
                         Browser.Visibility = Visibility.Visible;
                     }
+                    e.Handled = true;
                     break;
             }
         }
@@ -1118,7 +1174,16 @@ namespace SelectUnknown
             // 正式开始判断
             if (string.IsNullOrWhiteSpace(croppedTxt)) return "ImgOnly";// 没有识别出文字返回图片识别
 
-            if (selectedImg.Height >= 70) return "ImgOnly"; //太高了，认为是框图片
+            // 获取当前屏幕高度
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+
+            // 计算相对阈值（基于1080p的70像素作为基准）
+            double threshold = 70.0 * screenHeight / 1080.0;
+
+            if (selectedImg.Height >= threshold)
+            {
+                return "ImgOnly"; // 太高了，认为是框图片
+            }
 
             if (IsEnglishStringASentence(croppedTxt)) return "TranslateOnly";//全是英文且较长（可能是句子）我认为是在翻译
             

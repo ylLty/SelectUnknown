@@ -47,7 +47,7 @@ namespace SelectUnknown
         public static string APP_NAME => GetAssemblyTitle();
         public static string APP_VERSION => GetInformationalVersion();
 
-        public const int VERSION_CODE = 3;
+        public const int VERSION_CODE = 3;//不要忘了修改！！！Do not forget to edit it!!!
         public static string COPYRIGHT_INFO => GetCopyright();
         public static string GetCopyright()
         {
@@ -349,9 +349,29 @@ namespace SelectUnknown
                 };
 
                 // 鼠标位置
+                // 1. 获取物理鼠标位置
                 var pos = GetMousePosition();
-                win.Left = pos.X + 8;
-                win.Top = pos.Y + 18;
+
+                // 2. 将物理像素转换为 WPF 逻辑像素
+                double dpiX, dpiY;
+                var source = PresentationSource.FromVisual(Application.Current.MainWindow);
+
+                if (source?.CompositionTarget != null)
+                {
+                    // 获取矩阵转换：从物理转换到逻辑
+                    var matrix = source.CompositionTarget.TransformFromDevice;
+                    var wpvPos = matrix.Transform(new Point(pos.X, pos.Y));
+
+                    // 3. 使用转换后的坐标
+                    win.Left = wpvPos.X + 8;
+                    win.Top = wpvPos.Y + 18;
+                }
+                else
+                {
+                    // 兜底方案（如果主窗口还没加载）
+                    win.Left = pos.X + 8;
+                    win.Top = pos.Y + 18;
+                }
 
                 win.Show();
 
@@ -420,33 +440,39 @@ namespace SelectUnknown
         /// <returns></returns>
         public static string GetSelectedText()
         {
-            // 保存当前剪贴板内容，避免覆盖用户原有的数据
-            var oldText = System.Windows.Forms.Clipboard.GetText();
-
-            // 发送 Ctrl+C 快捷键 (需引用 System.Windows.Forms)
-            System.Windows.Forms.SendKeys.SendWait("^c");
-
-            // 给系统一点响应时间
-            System.Threading.Thread.Sleep(100);
-
-            string selectedText = System.Windows.Forms.Clipboard.GetText();
-
-            // 内容相同表明没选择
-            if (oldText == selectedText)
-            {
-                LogHelper.Log("用户没有选择文本");
-                return "";
-            }
-
-            // 恢复原剪贴板内容
             try
             {
-                System.Windows.Forms.Clipboard.SetText(oldText);
+                // 保存当前剪贴板内容，避免覆盖用户原有的数据
+                var oldText = System.Windows.Forms.Clipboard.GetText();
+
+                // 发送 Ctrl+C 快捷键 (需引用 System.Windows.Forms)
+                System.Windows.Forms.SendKeys.SendWait("^c");
+
+                // 给系统一点响应时间
+                System.Threading.Thread.Sleep(100);
+
+                string selectedText = System.Windows.Forms.Clipboard.GetText();
+
+                // 内容相同表明没选择
+                if (oldText == selectedText)
+                {
+                    LogHelper.Log("用户没有选择文本");
+                    return "";
+                }
+
+                // 恢复原剪贴板内容
+                try
+                {
+                    System.Windows.Forms.Clipboard.SetText(oldText);
+                }
+                catch { }//静默捕获，免得用户提前复制了图片出问题
+
+                LogHelper.Log("已提取用户选择的文本：**SECRET**");
+                return selectedText;
             }
-            catch { }//静默捕获，免得用户提前复制了图片出问题
-            
-            LogHelper.Log("已提取用户选择的文本：**SECRET**");
-            return selectedText;
+            catch {
+                return "";
+            }
         }
         /// <summary>
         /// 获取搜索引擎首页链接

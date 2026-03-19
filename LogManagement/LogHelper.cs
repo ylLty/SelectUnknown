@@ -39,21 +39,25 @@ namespace SelectUnknown.LogManagement
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Log(string info, LogLevel level = LogLevel.Info)
         {
-            string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss:fff}] [{level}] {info}";
-            if (!Directory.Exists(logPath))
+            try
             {
-                Directory.CreateDirectory(logPath);
-            }//我怎么能忘了创建目录....
-            // 如果文件不存在，创建文件
-            if (!File.Exists(logFilePath))
-            {
-                File.Create(logFilePath).Dispose();
+                string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss:fff}] [{level}] {info}";
+                if (!Directory.Exists(logPath))
+                {
+                    Directory.CreateDirectory(logPath);
+                }//我怎么能忘了创建目录....
+                // 如果文件不存在，创建文件
+                if (!File.Exists(logFilePath))
+                {
+                    File.Create(logFilePath).Dispose();
+                }
+                using (StreamWriter writer = new StreamWriter(logFilePath, true))
+                {
+                    writer.WriteLine(logMessage);
+                }
+                Console.WriteLine(logMessage);
             }
-            using (StreamWriter writer = new StreamWriter(logFilePath, true))
-            {
-                writer.WriteLine(logMessage);
-            }
-            Console.WriteLine(logMessage);
+            catch { }//静默吞吧
         }
         /// <summary>
         /// 获取日志文件路径

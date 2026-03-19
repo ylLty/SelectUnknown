@@ -48,34 +48,34 @@
                     <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
                     <!--模式-->
 
-                    <Button Name="AutoSele" Click="AutoSele_Click" Foreground="#FF292929" ToolTip="自动模式" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="0,2,2,2" Width="25" Height="25">
+                    <Button Name="AutoSele" Click="AutoSele_Click" Foreground="#FF292929" ToolTip="自动模式 (A)" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="0,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="RefreshAuto" Cursor=""/>
                     </Button>
-                    <Button Name="TextOnly" Click="TextOnly_Click" Foreground="#FF292929" ToolTip="仅搜索框中文字" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25" Cursor="Hand">
+                    <Button Name="TextOnly" Click="TextOnly_Click" Foreground="#FF292929" ToolTip="仅搜索框中文字 (T)" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25" Cursor="Hand">
                         <materialDesign:PackIcon Kind="TextSearchVariant"/>
                     </Button>
-                    <Button Name="ImgOnly" Click="ImgOnly_Click" Foreground="#FF292929" ToolTip="仅搜索框中图片" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                    <Button Name="ImgOnly" Click="ImgOnly_Click" Foreground="#FF292929" ToolTip="仅搜索框中图片 (Q)" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="ImageSearch"/>
                     </Button>
-                    <Button Name="TranslateOnly" Click="TranslateOnly_Click" Foreground="#FF292929" ToolTip="仅翻译" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                    <Button Name="TranslateOnly" Click="TranslateOnly_Click" Foreground="#FF292929" ToolTip="仅翻译 (Y)" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="Translate"/>
                     </Button>
-                    <Button Name="OcrOnly" Click="OcrOnly_Click" Foreground="#FF292929" ToolTip="仅识别框中文字" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                    <Button Name="OcrOnly" Click="OcrOnly_Click" Foreground="#FF292929" ToolTip="仅识别框中文字 (O)" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="AlphaTBoxOutline"/>
                     </Button>
                     
                     <materialDesign:PackIcon Kind="DragVerticalVariant" Foreground="#FFA9C0C3" VerticalAlignment="Center"/>
                     
                     <!--截图工具-->
-                    
 
-                    <Button Name="TakeColor" Click="TakeColor_Click" ToolTip="取色工具" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
+
+                    <Button Name="TakeColor" Click="TakeColor_Click" ToolTip="取色工具 (P)" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="2,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="Eyedropper" Foreground="#FF292929"/>
                     </Button>
-                    <Button Name="SaveImg" Click="SaveImg_Click" ToolTip="保存框中图片" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                    <Button Name="SaveImg" Click="SaveImg_Click" ToolTip="保存框中图片 (S)" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="ContentSave" Foreground="#FF292929"/>
                     </Button>
-                    <Button Name="SaveScreen" Click="SaveScreen_Click" ToolTip="保存整个屏幕" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
+                    <Button Name="SaveScreen" Click="SaveScreen_Click" ToolTip="保存整个屏幕 (Ctrl + S)" Background="#FFE89ABD" BorderBrush="#FFE89ABD" Style="{DynamicResource MaterialDesignFloatingActionButton}" Margin="8,2,2,2" Width="25" Height="25">
                         <materialDesign:PackIcon Kind="ContentSaveAll" Foreground="#FF292929"/>
                     </Button>
 
@@ -111,11 +111,11 @@
                             <materialDesign:PackIcon Kind="Drag" VerticalAlignment="Center"/>
                         </Border>
 
-                        <TextBox x:Name="AddressBar" ToolTip="浏览器中打开" Height="30" Width="280" Margin="8,6,15,0" Text="{Binding ElementName=webView, Path=Source}" AcceptsReturn="False" IsReadOnly="True" VerticalAlignment="Center"/>
-                        <Button x:Name="ShowInBrowser" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="40" Height="40" Margin="0,6,0,0" Click="ShowInBrowser_Click" VerticalAlignment="Center">
+                        <TextBox x:Name="AddressBar" Height="30" Width="280" Margin="8,6,15,0" Text="{Binding ElementName=webView, Path=Source}" AcceptsReturn="False" IsReadOnly="True" VerticalAlignment="Center"/>
+                        <Button x:Name="ShowInBrowser" ToolTip="浏览器中打开" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="40" Height="40" Margin="0,6,0,0" Click="ShowInBrowser_Click" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="OpenInNew" Foreground="AliceBlue"/>
                         </Button>
-                        <Button x:Name="Minisize" ToolTip="最小化" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="40" Height="40" Margin="15,6,0,0" Click="Minisize_Click" VerticalAlignment="Center">
+                        <Button x:Name="Minisize" ToolTip="最小化 (Tab)" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="40" Height="40" Margin="15,6,0,0" Click="Minisize_Click" VerticalAlignment="Center" Cursor="Hand">
                             <materialDesign:PackIcon Kind="WindowMinimize" Foreground="AliceBlue"/>
                         </Button>
                     </StackPanel>
