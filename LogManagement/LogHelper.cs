@@ -41,6 +41,12 @@ namespace SelectUnknown.LogManagement
         {
             try
             {
+                try
+                {
+                    if (ConfigManagment.Config.curConfig.LogLever > level) return;//日志记录等级
+                }
+                catch { }
+
                 string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss:fff}] [{level}] {info}";
                 if (!Directory.Exists(logPath))
                 {

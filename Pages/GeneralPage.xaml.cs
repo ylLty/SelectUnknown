@@ -152,6 +152,36 @@ namespace SelectUnknown.Pages
             Config.curConfig.AutoCheckUpdate = false;
         }
 
-        
+        private void UpdateChannelName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (UpdateChannelName.SelectedItem == null) return;
+            string result = UpdateChannelName.SelectedItem.ToString().Split(':')[1].Trim();
+            Config.curConfig.UpdateChannelName = result;
+            ConfigManager.SaveConfig();
+        }
+
+        private void LogLever_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LogLever.SelectedItem == null) return;
+            string result = LogLever.SelectedItem.ToString().Split(':')[1].Trim();
+            switch (result) {
+                case "Debug":
+                    Config.curConfig.LogLever = LogLevel.Debug;
+                    break;
+                case "Info":
+                    Config.curConfig.LogLever = LogLevel.Info;
+                    break;
+                case "Warn":
+                    Config.curConfig.LogLever = LogLevel.Warn;
+                    break;
+                case "Error":
+                    Config.curConfig.LogLever = LogLevel.Error;
+                    break;
+                default:
+                    Config.curConfig.LogLever = LogLevel.Info;
+                    break;
+            }
+            ConfigManager.SaveConfig();
+        }
     }
 }

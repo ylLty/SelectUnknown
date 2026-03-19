@@ -55,6 +55,18 @@
                          Color="Black"/>
                 </Border.Effect>
             </Border>
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+                <DockPanel>
+                    <TextBlock Text="更新下载渠道" VerticalAlignment="Center" FontSize="14" />
+                    <ComboBox Name="UpdateChannelName" Text="夸克网盘" IsEditable="True" IsReadOnly="True" SelectionChanged="UpdateChannelName_SelectionChanged" Width="100" HorizontalAlignment="Right">
+                        <ComboBoxItem Content="夸克网盘"></ComboBoxItem>
+                        <ComboBoxItem Content="GitHub"></ComboBoxItem>
+                    </ComboBox>
+                </DockPanel>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
+                </Border.Effect>
+            </Border>
             <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="软件启动时将会自动清理设定天数前的日志文件">
                 <DockPanel>
                     <TextBlock Text="日志自动清理时间（天）" VerticalAlignment="Center" FontSize="14"/>
@@ -67,6 +79,20 @@
                          Direction="270" 
                          Opacity="0.5"
                          Color="Black"/>
+                </Border.Effect>
+            </Border>
+            <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0">
+                <DockPanel>
+                    <TextBlock Text="更新下载渠道" VerticalAlignment="Center" FontSize="14" />
+                    <ComboBox Name="LogLever" Text="Info" IsEditable="True" IsReadOnly="True" SelectionChanged="LogLever_SelectionChanged" Width="100" HorizontalAlignment="Right">
+                        <ComboBoxItem Content="Error"></ComboBoxItem>
+                        <ComboBoxItem Content="Warn"></ComboBoxItem>
+                        <ComboBoxItem Content="Info"></ComboBoxItem>
+                        <ComboBoxItem Content="Debug"></ComboBoxItem>
+                    </ComboBox>
+                </DockPanel>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Opacity="0.5" Color="Black"/>
                 </Border.Effect>
             </Border>
             <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="截图保存位置，留空将自动获取图片文件夹">

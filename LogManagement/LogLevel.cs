@@ -8,9 +8,9 @@ namespace SelectUnknown.LogManagement
 {
     public enum LogLevel
     {
-        Info,
-        Debug,
-        Warn,
-        Error
+        Debug = 0,
+        Info = 1,
+        Warn = 2,
+        Error = 3
     }
 }

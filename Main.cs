@@ -289,14 +289,23 @@ namespace SelectUnknown
                 DialogResult messageBoxButton = MessageBox.Show($"发现新版本 {info.Version}！\n\n更新内容：\n{info.ReleaseSummary}\n\n点击确定前往下载页面", "发现新版本！", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                 if (messageBoxButton == DialogResult.OK)
                 {
-                    OpenUrl(info.DownLoadUrl);
-                    LogHelper.Log($"用户选择更新，已打开下载链接: {info.DownLoadUrl}");
+                    string updateUrl;
+                    if (Config.curConfig.UpdateChannelName == "GitHub")
+                    {
+                        updateUrl = "https://github.com/ylLty/SelectUnknown/releases/latest";
+                    }
+                    else
+                    {
+                        updateUrl = info.DownLoadUrl;
+                    }
+                    OpenUrl(updateUrl);
+                    LogHelper.Log($"用户选择更新，已打开下载链接: {updateUrl}", LogLevel.Debug);
                 }
                 else
                 {
                     refused = true;
                 }
-                LogHelper.Log($"用户选择 {(messageBoxButton == DialogResult.OK ? "更新" : "取消")}");
+                LogHelper.Log($"用户选择 {(messageBoxButton == DialogResult.OK ? "更新" : "取消")}", LogLevel.Debug);
             }
             else if(proactive)
             {

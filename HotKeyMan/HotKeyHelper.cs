@@ -55,11 +55,11 @@ namespace SelectUnknown.HotKeyMan
         }
         private static void StartHotkeyPressed(object? sender, KeyPressedEventArgs e)
         {
-            LogHelper.Log("框定即搜热键被按下，执行框定即搜操作", LogLevel.Info);
+            LogHelper.Log("框定即搜热键被按下，执行框定即搜操作", LogLevel.Debug);
             string selectedWords = Main.GetSelectedText();
             if (Main.IsUrl(selectedWords))
             {
-                LogHelper.Log("检测到选中的文本是一个网址，直接使用浏览器打开", LogLevel.Info);
+                LogHelper.Log("检测到选中的文本是一个网址，直接使用浏览器打开", LogLevel.Debug);
                 Main.MousePopup("检测到网址，已使用浏览器打开");
                 Main.OpenUrl(selectedWords);
                 return;
@@ -98,7 +98,7 @@ namespace SelectUnknown.HotKeyMan
         }
         private static void ScreenshotHotkeyPressed(object? sender, KeyPressedEventArgs e)
         {
-            LogHelper.Log("截图热键被按下，执行截图操作", LogLevel.Info);
+            LogHelper.Log("截图热键被按下，执行截图操作", LogLevel.Debug);
             ScreencatchHelper.Screenshot();
             Main.MousePopup("截图已保存");
         }

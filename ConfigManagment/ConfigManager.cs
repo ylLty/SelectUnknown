@@ -27,7 +27,7 @@ namespace SelectUnknown.ConfigManagment
                 if (!HasWritePermission(configPath))
                 {
                     // 如果依然没权限（用户点了“否”），可以给用户一个友好提示
-                    System.Windows.MessageBox.Show("程序缺少必要的写入权限，配置可能无法保存。");
+                    System.Windows.MessageBox.Show("程序缺少必要的写入权限，配置无法保存。继续运行会出现问题。");
                 }
             }
             if (File.Exists(ConfigFilePath))
@@ -124,7 +124,7 @@ namespace SelectUnknown.ConfigManagment
             try
             {
                 Config.curConfig = JsonSerializer.Deserialize<Config>(jsonString);
-                LogHelper.Log("配置读取成功");
+                LogHelper.Log("配置读取成功", LogLevel.Debug);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 ﻿using GlobalHotKey;
+using SelectUnknown.LogManagement;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -15,7 +16,9 @@ namespace SelectUnknown.ConfigManagment
         #region 常规设置
         public bool SilentStart { get; set; } = false;
         public bool AutoCheckUpdate { get; set; } = true;
+        public string UpdateChannelName { get; set; } = "夸克网盘";
         public int OldLogDeleteDays { get; set; } = 2;
+        public LogLevel LogLever { get; set; } = LogLevel.Info;
         public string ScreenshotFolderPath { get; set; } = "";
         #endregion
         #region 热键设置

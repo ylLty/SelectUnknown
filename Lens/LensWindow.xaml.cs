@@ -202,7 +202,7 @@ namespace SelectUnknown
             MainGrid.Children.Clear();
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            LogHelper.Log("框定即搜窗口已关闭，资源已释放");
+            LogHelper.Log("框定即搜窗口已关闭，资源已释放", LogLevel.Debug);
         }
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -214,7 +214,7 @@ namespace SelectUnknown
             if (Config.curConfig.UsingAndroidUserAgent)
             {
                 webView.CoreWebView2.Settings.UserAgent = Main.GetWebViewUserAgent();//设置为安卓 UA
-                LogHelper.Log("已设置 WebView2 使用安卓用户代理");
+                LogHelper.Log("已设置 WebView2 使用安卓用户代理", LogLevel.Debug);
             }
             SelectRectangle_Click(sender, e);
             if (Config.curConfig.AutoCheckUpdate)
@@ -338,7 +338,7 @@ namespace SelectUnknown
                 Main.MousePopup("二维码内容不是链接，已执行解析操作");
                 MainText.Text = code.Text;
             }
-            LogHelper.Log("用户左键点击了二维码中心点");
+            LogHelper.Log("用户左键点击了二维码中心点", LogLevel.Debug);
 
             e.Handled = true;
         }
@@ -352,7 +352,7 @@ namespace SelectUnknown
 
             MainText.Text = code.Text;
             Main.MousePopup("二维码内容已显示在文本处理框中");
-            LogHelper.Log("用户右键点击了二维码中心点，二维码内容已显示在文本处理框中");
+            LogHelper.Log("用户右键点击了二维码中心点，二维码内容已显示在文本处理框中", LogLevel.Debug);
             e.Handled = true;
         }
 
@@ -473,7 +473,7 @@ namespace SelectUnknown
         System.Windows.Point startPoint;
         private void SelectRectangle_Click(object sender, RoutedEventArgs e)
         {
-            LogHelper.Log("用户选择了框选工具");
+            LogHelper.Log("用户选择了框选工具", LogLevel.Debug);
             ScreenImage.Cursor = System.Windows.Input.Cursors.Cross;
             ScreenImage.MouseLeftButtonDown += StartSelectRectangle;
             ScreenImage.MouseMove += MovingSelectRectangle;
@@ -571,7 +571,7 @@ namespace SelectUnknown
                     }
                     string scUrl = Main.GetSESearchingUrl(croppedTxt);
                     webView.CoreWebView2.Navigate(scUrl);
-                    LogHelper.Log("用户进行了一次从框选区域中搜索文字");
+                    LogHelper.Log("用户进行了一次从框选区域中搜索文字", LogLevel.Debug);
                     break;
                 case "ImgOnly":
                     ImageToLens(croppedImg);
@@ -582,7 +582,7 @@ namespace SelectUnknown
                     {
                         MainText.Text = croppedTxt;
                         //Main.MousePopup("文字识别完成，结果已显示在文本处理面板");
-                        LogHelper.Log("文字识别完成，结果已显示在文本处理面板");
+                        LogHelper.Log("文字识别完成，结果已显示在文本处理面板", LogLevel.Debug);
                     }
                     else
                     {
@@ -599,7 +599,7 @@ namespace SelectUnknown
                     {
                         MainText.Text = croppedTxt;
                         //Main.MousePopup("文字识别完成，结果已显示在文本处理面板");
-                        LogHelper.Log("文字识别完成，结果已显示在文本处理面板");
+                        LogHelper.Log("文字识别完成，结果已显示在文本处理面板", LogLevel.Debug);
                     }
                     else
                     {
@@ -609,7 +609,7 @@ namespace SelectUnknown
                     break;
                 case "None":
                     //Clipboard.SetImage(croppedImg);
-                    LogHelper.Log("不进行操作");
+                    LogHelper.Log("不进行操作", LogLevel.Debug);
                     break;
                 default:
                     Main.MousePopup("错误：未知的处理模式");
@@ -658,7 +658,7 @@ namespace SelectUnknown
             webView.CoreWebView2.Navigate(currentLensUrl);
             isLensSearching = true;
             lensTimes = navigationTimes;
-            LogHelper.Log($"用户完成了一次框选并上传至 {Config.curConfig.LensEngineName} 进行分析");
+            LogHelper.Log($"用户完成了一次框选并上传至 {Config.curConfig.LensEngineName} 进行分析", LogLevel.Debug);
             
         }
         private Bitmap GetSelectedImg()
