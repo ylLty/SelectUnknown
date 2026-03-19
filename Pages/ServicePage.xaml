@@ -11,7 +11,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ServicePage">
 
-    <ScrollViewer  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+    <ScrollViewer  HorizontalScrollBarVisibility="Disabled" >
         <StackPanel>
             <Border Padding="5" Background="#FFFBE8F0" CornerRadius="5" Margin="8,8,8,0" ToolTip="谷歌在中国大陆无法访问">
                 <DockPanel>
