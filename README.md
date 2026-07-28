@@ -10,7 +10,8 @@
 
 
 </div>
-
+# 不再更新
+因用户过少，反响平平，此仓库已归档。**敬请期待日后的新框架、新体验的 SelectUnknownNext ！**
 <div align="center">
 
 # 目录

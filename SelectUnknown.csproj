@@ -33,6 +33,8 @@
 美化配置页面
 修复msi安装包相关问题
 优化大屏设备体验</PackageReleaseNotes>
+
+	<Authors>yl_lty</Authors>
   </PropertyGroup>
 
   <!--<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
